@@ -4,7 +4,7 @@ import type { Product } from "./products";
 export type CartItem = {
   id: string;
   product: Product;
-  size: number;
+  size: string | number;
   quantity: number;
 };
 
@@ -14,7 +14,7 @@ type CartContextValue = {
   open: () => void;
   close: () => void;
   setOpen: (v: boolean) => void;
-  addItem: (product: Product, size: number, quantity?: number) => void;
+  addItem: (product: Product, size: string | number, quantity?: number) => void;
   removeItem: (id: string) => void;
   updateQuantity: (id: string, quantity: number) => void;
   clear: () => void;
@@ -24,7 +24,7 @@ type CartContextValue = {
 
 const CartContext = createContext<CartContextValue | null>(null);
 
-const STORAGE_KEY = "lon-co-cart";
+const STORAGE_KEY = "the-lion-cart";
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);

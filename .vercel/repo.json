@@ -1,0 +1,11 @@
+{
+  "remoteName": "origin",
+  "projects": [
+    {
+      "id": "prj_C2iudr6PTaa1p5NYKWtMlT1VVJPS",
+      "name": "tiend-online",
+      "directory": ".",
+      "orgId": "team_sFxypqaZytahmZ9VHSEV6Pj6"
+    }
+  ]
+}
