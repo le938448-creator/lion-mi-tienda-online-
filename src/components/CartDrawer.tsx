@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Minus, Plus, ShoppingBag, Trash2, X, MessageCircle, Truck } from "lucide-react";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { useCart } from "@/lib/cart";
-import { formatPrice, STORE_PHONE, STORE_PHONE_DISPLAY } from "@/lib/products";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "./ui/sheet";
+import { useCart } from "../lib/cart";
+import { formatPrice, STORE_PHONE, STORE_PHONE_DISPLAY } from "../lib/products";
 
 export function CartDrawer() {
   const { items, isOpen, setOpen, removeItem, updateQuantity, totalPrice, totalItems, clear } =
