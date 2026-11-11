@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { ProductCard } from "@/components/ProductCard";
@@ -23,6 +23,12 @@ export const Route = createFileRoute("/")({
 function HomePage() {
   const navigate = useNavigate();
   const { addItem, open } = useCart();
+  const [showSplash, setShowSplash] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setShowSplash(false), 2000);
+    return () => clearTimeout(timer);
+  }, []);
 
   // 4 a 6 prendas destacadas para el carrusel horizontal (excluyendo el lote para mostrar prendas individuales)
   const featuredProducts = products.filter((p) => p.price > 0 && p.id !== "lote-completo").slice(0, 6);
@@ -73,6 +79,24 @@ Me indican disponibilidad y datos para la entrega?`;
 
   return (
     <div className="min-h-screen bg-white text-black flex flex-col font-sans">
+      {/* SPLASH SCREEN INICIAL NEGRO — THE LION & CO */}
+      <div
+        onClick={() => setShowSplash(false)}
+        className={`fixed inset-0 z-50 bg-black flex flex-col items-center justify-center transition-opacity duration-700 select-none cursor-pointer ${
+          showSplash ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+        }`}
+      >
+        <div
+          className="font-heading text-4xl md:text-6xl text-white tracking-normal font-normal text-center px-4"
+          style={{ letterSpacing: "0.02em" }}
+        >
+          THE LION &amp; CO
+        </div>
+        <div className="mt-3 text-white/40 font-mono text-[9px] md:text-[11px] tracking-[0.35em] uppercase text-center">
+          TEZIUTLÁN, PUEBLA · MÉXICO
+        </div>
+      </div>
+
       <SiteHeader />
 
       {/* HERO — FOTO DE LA MUJER COMPLETA */}
