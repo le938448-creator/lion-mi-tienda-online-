@@ -62,12 +62,12 @@ function ProductoDetalle() {
 
   const handleDirectWhatsApp = () => {
     const selectedSizeText = size ? `(Talla: ${size})` : "";
-    const message = `👋 *Hola The Lion & Co, me interesa esta prenda:*
+    const message = `*Hola The Lion & Co, me interesa esta prenda:*
 
-👕 *Producto:* ${product.name} ${selectedSizeText}
-💰 *Precio:* ${formatPrice(product.price)}
-${product.condition ? `🏷️ *Condición:* ${product.condition}` : ""}
-🔗 *Enlace:* ${window.location.href}
+*Producto:* ${product.name} ${selectedSizeText}
+*Precio:* ${formatPrice(product.price)}
+${product.condition ? `*Condición:* ${product.condition}` : ""}
+*Enlace:* ${window.location.href}
 
 ¿Sigue disponible para entrega en Teziutlán?`;
     window.open(`https://wa.me/${STORE_PHONE}?text=${encodeURIComponent(message)}`, "_blank");
@@ -98,8 +98,8 @@ ${product.condition ? `🏷️ *Condición:* ${product.condition}` : ""}
               </div>
             )}
             {product.isSecondHand && (
-              <div className="absolute bottom-4 left-4 bg-amber-100 text-amber-900 border border-amber-300 px-3 py-1 text-[11px] font-bold tracking-wide">
-                ♻️ Moda Circular · Pieza Única
+              <div className="absolute bottom-4 left-4 bg-neutral-900 text-white px-3 py-1 text-[11px] font-bold tracking-wider uppercase">
+                Moda Circular · Pieza Única
               </div>
             )}
           </div>
@@ -153,7 +153,7 @@ ${product.condition ? `🏷️ *Condición:* ${product.condition}` : ""}
                   )}
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  {product.sizes.map((s) => (
+                  {product.sizes.map((s: string | number) => (
                     <button
                       key={s}
                       onClick={() => setSize(s)}

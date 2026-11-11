@@ -218,7 +218,7 @@ function Catalogo() {
                     : "border-neutral-300 bg-white text-neutral-700 hover:border-black"
                 }`}
               >
-                <span>🔥 Solo Ofertas</span>
+                <span>Solo Ofertas</span>
                 <span>{ofertas === "true" ? "Activo" : "Ver"}</span>
               </button>
             </div>

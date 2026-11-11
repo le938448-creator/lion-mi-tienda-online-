@@ -35,7 +35,6 @@ const SECTION_STYLES: Record<
     accent: "group-hover:from-amber-950/95",
     badge: "bg-amber-400 text-black",
     badgeText: "SEGUNDA MANO",
-    badgeIcon: "♻️",
     tagColor: "text-amber-300/80",
     titleColor: "text-amber-50",
     cta: "text-amber-300",
@@ -63,7 +62,6 @@ const SECTION_STYLES: Record<
     accent: "",
     badge: "bg-emerald-400 text-black",
     badgeText: "GRATIS",
-    badgeIcon: "🎁",
     tagColor: "text-emerald-300/80",
     titleColor: "text-emerald-50",
     cta: "text-emerald-300",
@@ -305,7 +303,7 @@ function Editorial() {
         {/* BARRA SUPERIOR: accesos directos */}
         <div className="bg-black border-b border-white/10 px-4 md:px-8 py-2 flex flex-wrap items-center justify-between gap-2 text-[11px] z-10">
           <div className="text-white/50 tracking-widest font-mono text-[10px] uppercase hidden md:block">
-            📍 Teziutlán, Pue. · Moto $30 o entrega en centro
+            Teziutlán, Pue. · Moto $30 o entrega en centro
           </div>
           <div className="flex items-center gap-2 flex-wrap">
             <Link

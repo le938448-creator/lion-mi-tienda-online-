@@ -24,7 +24,7 @@ export function SiteFooter() {
           <ul className="space-y-2 text-sm text-neutral-400">
             <li>
               <Link to="/catalogo" search={{ categoria: "segunda-mano" }} className="hover:text-amber-400 transition-colors font-medium">
-                ♻️ Segunda Mano
+                Segunda Mano
               </Link>
             </li>
             <li>
@@ -48,8 +48,8 @@ export function SiteFooter() {
               </Link>
             </li>
             <li>
-              <Link to="/catalogo" search={{ ofertas: "true" }} className="hover:text-red-400 transition-colors">
-                🔥 Ofertas
+              <Link to="/catalogo" search={{ ofertas: "true" }} className="hover:text-neutral-200 transition-colors">
+                Ofertas
               </Link>
             </li>
           </ul>

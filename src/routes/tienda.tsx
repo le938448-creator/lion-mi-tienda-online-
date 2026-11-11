@@ -34,26 +34,26 @@ function Tienda() {
   const handleCommunitySubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const actionText = donationType === "donar" ? "Donar Ropa" : "Solicitar Ropa Gratis";
-    const message = `👋 *Hola The Lion & Co! Iniciativa Comunitaria:*
+    const message = `*INICIATIVA COMUNITARIA - THE LION & CO*
 
-📌 *Acción:* ${actionText}
-👤 *Nombre:* ${donorName.trim() || "Anónimo"}
-📝 *Detalles de las prendas:* ${clothingDetails.trim() || "Quiero más información"}
+*Accion:* ${actionText}
+*Nombre:* ${donorName.trim() || "Anonimo"}
+*Detalle de prendas:* ${clothingDetails.trim() || "Deseo recibir informacion"}
+*Ubicacion:* Teziutlan, Puebla.
 
-📍 *Ubicación:* Teziutlán, Puebla.
-¿Cómo podemos coordinar?`;
+Hola, deseo coordinar los detalles.`;
 
     window.open(`https://wa.me/${STORE_PHONE}?text=${encodeURIComponent(message)}`, "_blank");
   };
 
   const handleWaitlistSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const message = `🦁 *¡Hola The Lion & Co! Quiero unirme a la lista de espera:*
+    const message = `*LISTA DE ESPERA - THE LION ORIGINALS*
 
-Nombre: ${waitlistName.trim() || "Un seguidor de La Manada"}
-Interés: Próximo drop de ropa deportiva / gym The Lion Originals.
+Nombre: ${waitlistName.trim() || "Interesado en drop"}
+Interes: Drop 01 (Coleccion Gym & Streetwear)
 
-¡Avísenme en cuanto lancen la primera colección!`;
+Deseo recibir notificacion directa cuando este disponible.`;
 
     window.open(`https://wa.me/${STORE_PHONE}?text=${encodeURIComponent(message)}`, "_blank");
   };
@@ -307,9 +307,9 @@ Interés: Próximo drop de ropa deportiva / gym The Lion Originals.
               En Teziutlán seleccionamos y revisamos prenda por prenda: desde pantalones y chamarras hasta blusas y vestidos. Prendas limpias, en excelente estado y a una fracción de su costo original.
             </p>
             <ul className="mt-6 space-y-2.5 text-sm text-neutral-800 font-medium">
-              <li className="flex items-center gap-2">✓ Precios desde $100 MXN en ropa infantil y básica</li>
-              <li className="flex items-center gap-2">✓ Cada pieza es única: si te gusta, apártala de inmediato</li>
-              <li className="flex items-center gap-2">✓ Entrega el mismo día en Teziutlán o punto céntrico</li>
+              <li className="flex items-center gap-2">• Precios desde $100 MXN en ropa infantil y básica</li>
+              <li className="flex items-center gap-2">• Cada pieza es única: prendas revisadas antes de entrega</li>
+              <li className="flex items-center gap-2">• Entrega el mismo día en Teziutlán o punto céntrico</li>
             </ul>
             <div className="mt-8 flex flex-wrap gap-4">
               <Link

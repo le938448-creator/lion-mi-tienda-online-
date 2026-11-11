@@ -32,21 +32,21 @@ export function CartDrawer() {
       )
       .join("\n");
 
-    const message = `👋 *¡Hola The Lion & Co! Quiero realizar un pedido:*
+    const message = `*PEDIDO - THE LION & CO*
 
-📋 *PRODUCTOS:*
+*PRODUCTOS:*
 ${itemsSummary}
 
-📦 *MÉTODO DE ENTREGA:*
+*METODO DE ENTREGA:*
 ${shippingText}
-${address.trim() ? `📍 *Dirección / Referencias:* ${address.trim()}` : ""}
-${customerName.trim() ? `👤 *Cliente:* ${customerName.trim()}` : ""}
+${address.trim() ? `*Direccion / Referencias:* ${address.trim()}` : ""}
+${customerName.trim() ? `*Cliente:* ${customerName.trim()}` : ""}
 
-💰 *Subtotal:* ${formatPrice(totalPrice)}
-🚚 *Envío:* ${shippingCost > 0 ? formatPrice(shippingCost) : "Gratis / Por acordar"}
-⭐ *TOTAL A PAGAR:* ${formatPrice(grandTotal)}
+*Subtotal:* ${formatPrice(totalPrice)}
+*Envio:* ${shippingCost > 0 ? formatPrice(shippingCost) : "Gratis / Por acordar"}
+*TOTAL A PAGAR:* ${formatPrice(grandTotal)}
 
-¿Me confirmas disponibilidad y los datos para coordinar el pago/entrega? ¡Gracias!`;
+Hola, deseo confirmar este pedido. ¿Me indican disponibilidad y datos para la entrega?`;
 
     const encoded = encodeURIComponent(message);
     window.open(`https://wa.me/${STORE_PHONE}?text=${encoded}`, "_blank");

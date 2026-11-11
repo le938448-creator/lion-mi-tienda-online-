@@ -186,8 +186,8 @@ export function SiteHeader() {
             </div>
 
             <div className="mt-auto pt-6 border-t border-neutral-200 space-y-3">
-              <div className="text-xs text-neutral-500">
-                📍 Entregas en Teziutlán, Puebla
+              <div className="text-xs text-neutral-500 font-mono tracking-wider uppercase">
+                Teziutlán, Puebla
               </div>
               <a
                 href={`https://wa.me/${STORE_PHONE}?text=${encodeURIComponent(
