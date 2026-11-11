@@ -3,17 +3,17 @@ import { useState, useEffect } from "react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { ProductCard } from "@/components/ProductCard";
-import { products, formatPrice, STORE_PHONE } from "@/lib/products";
+import { products, LOTE_COMPLETO, DONATION_ITEMS, formatPrice, STORE_PHONE } from "@/lib/products";
 import { useCart } from "@/lib/cart";
-import { ArrowRight, ChevronRight, Sparkles, Send, HeartHandshake, ShoppingBag } from "lucide-react";
+import { ArrowRight, ChevronRight, Sparkles, Send, HeartHandshake, ShoppingBag, Gift, PackageCheck } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "THE LION & CO — Teziutlan" },
+      { title: "THE LION & CO — Teziutlán" },
       {
         name: "description",
-        content: "THE LION & CO: Tienda oficial, prendas seleccionadas, moda urbana y donaciones comunitarias en Teziutlan, Puebla.",
+        content: "THE LION & CO: Prendas seleccionadas, piezas nuevas y donaciones comunitarias en Teziutlán, Puebla.",
       },
     ],
   }),
@@ -24,42 +24,36 @@ function HomePage() {
   const navigate = useNavigate();
   const { addItem, open } = useCart();
   const [showSplash, setShowSplash] = useState(true);
+  const [loteAdded, setLoteAdded] = useState(false);
 
+  // Splash screen fadeout
   useEffect(() => {
-    const timer = setTimeout(() => setShowSplash(false), 2000);
+    const timer = setTimeout(() => setShowSplash(false), 1900);
     return () => clearTimeout(timer);
   }, []);
 
-  // 4 a 6 prendas destacadas para el carrusel horizontal (excluyendo el lote para mostrar prendas individuales)
-  const featuredProducts = products.filter((p) => p.price > 0 && p.id !== "lote-completo").slice(0, 6);
+  // Prendas destacadas para carrusel horizontal (4-6 prendas)
+  const featuredProducts = products.slice(0, 6);
 
-  // Lote completo
-  const loteProduct = products.find((p) => p.id === "lote-completo");
-  const [lotAdded, setLotAdded] = useState(false);
-
-  // Lista de espera Originals
+  // Formularios
   const [waitlistName, setWaitlistName] = useState("");
-
-  // Donaciones / Comunidad
   const [donationType, setDonationType] = useState<"donar" | "necesito">("donar");
   const [donationDetail, setDonationDetail] = useState("");
 
   const handleBuyLoteWhatsApp = () => {
     const text = `*PEDIDO — LOTE COMPLETO THE LION & CO*
 
-Hola, deseo adquirir el *Lote Completo (18 piezas, 2 regalos incluidos)* por *$1,830 MXN* con *Envio a Domicilio Gratis* en Teziutlan.
+Hola, quiero comprar el *Lote Completo (18 piezas en total)* por *$1,830 MXN* con *Envio a Domicilio Gratis* en Teziutlan.
 
-Me indican disponibilidad y datos para la entrega?`;
+Me indican disponibilidad y coordinamos la entrega?`;
     window.open(`https://wa.me/${STORE_PHONE}?text=${encodeURIComponent(text)}`, "_blank");
   };
 
   const handleAddLoteCart = () => {
-    if (loteProduct) {
-      addItem(loteProduct, "18 piezas", 1);
-      setLotAdded(true);
-      setTimeout(() => setLotAdded(false), 1500);
-      open();
-    }
+    addItem(LOTE_COMPLETO, "18 piezas", 1);
+    setLoteAdded(true);
+    setTimeout(() => setLoteAdded(false), 1500);
+    open();
   };
 
   const handleWaitlistSubmit = (e: React.FormEvent) => {
@@ -79,7 +73,8 @@ Me indican disponibilidad y datos para la entrega?`;
 
   return (
     <div className="min-h-screen bg-white text-black flex flex-col font-sans">
-      {/* SPLASH SCREEN INICIAL NEGRO — THE LION & CO */}
+
+      {/* SPLASH SCREEN INICIAL NEGRO — THE LION & CO (NO SE QUITA) */}
       <div
         onClick={() => setShowSplash(false)}
         className={`fixed inset-0 z-50 bg-black flex flex-col items-center justify-center transition-opacity duration-700 select-none cursor-pointer ${
@@ -100,13 +95,13 @@ Me indican disponibilidad y datos para la entrega?`;
       <SiteHeader />
 
       {/* HERO — FOTO DE LA MUJER COMPLETA */}
-      <section className="relative w-full aspect-[4/5] sm:aspect-[16/9] md:h-[80vh] min-h-[460px] max-h-[700px] overflow-hidden bg-neutral-900">
+      <section className="relative w-full aspect-[4/5] sm:aspect-[16/9] md:h-[75vh] min-h-[440px] max-h-[680px] overflow-hidden bg-neutral-900">
         <img
           src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1600&q=85&fit=crop"
           alt="THE LION & CO"
           className="absolute inset-0 w-full h-full object-cover object-center"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/30" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-black/30" />
 
         <div className="relative z-10 h-full max-w-5xl mx-auto px-5 flex flex-col justify-between py-8 md:py-12">
           {/* Arriba: THE LION & CO */}
@@ -115,169 +110,53 @@ Me indican disponibilidad y datos para la entrega?`;
               THE LION &amp; CO
             </h1>
             <p className="text-white/70 text-xs md:text-sm tracking-widest uppercase mt-0.5">
-              Teziutlan, Puebla
+              Teziutlán, Puebla
             </p>
           </div>
 
-          {/* Abajo: Tienda Oficial + Boton delgado "Entrar a la tienda" */}
+          {/* Abajo: Colección & Botón delgado "Entrar al catálogo" */}
           <div className="space-y-3">
             <div>
               <span className="text-amber-400 text-[11px] font-bold tracking-widest uppercase block mb-1">
-                Coleccion 2026
+                Catálogo Disponible
               </span>
               <h2 className="text-white text-2xl md:text-3xl font-black tracking-tight">
-                Tienda Oficial
+                Prendas Seleccionadas &amp; Nuevas
               </h2>
             </div>
             <Link
               to="/catalogo"
               className="inline-flex items-center justify-center gap-2 bg-white text-black hover:bg-neutral-100 px-6 py-2.5 text-xs font-semibold rounded-sm tracking-wider transition-colors"
             >
-              Entrar a la tienda <ArrowRight className="w-3.5 h-3.5" />
+              Entrar al catálogo <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
         </div>
       </section>
 
-      {/* 1. SECCION: TIENDA OFICIAL */}
-      <section className="py-8 md:py-12 border-b border-neutral-100 max-w-5xl mx-auto px-4 w-full">
-        <div className="flex items-end justify-between mb-4">
-          <div>
-            <span className="text-[10px] font-bold tracking-widest text-neutral-400 uppercase">
-              Lo nuevo &amp; Curado
-            </span>
-            <h2 className="text-[20px] md:text-[22px] font-bold text-neutral-900 tracking-tight">
-              Tienda Oficial
-            </h2>
-          </div>
-          <Link
-            to="/catalogo"
-            className="text-xs font-semibold text-neutral-600 hover:text-black inline-flex items-center gap-1"
-          >
-            Ver todo <ChevronRight className="w-3.5 h-3.5" />
-          </Link>
-        </div>
-
-        {/* Categorias de acceso directo estilo Instagram / Nike */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-          {[
-            { label: "Mujer", sub: "Prendas y vestidos", cat: "mujer", img: "/products/p1.jpg" },
-            { label: "Caballero", sub: "Streetwear y basicos", cat: "hombre", img: "/products/p8.jpg" },
-            { label: "Ninos", sub: "Mezclilla y casual", cat: "ninos", img: "/products/p16.jpg" },
-            { label: "Accesorios", sub: "Gorras y complementos", cat: "accesorios", img: "/products/p9.jpg" },
-          ].map((cat) => (
-            <Link
-              key={cat.label}
-              to="/catalogo"
-              search={{ categoria: cat.cat }}
-              className="group relative aspect-[4/3] rounded-sm overflow-hidden bg-neutral-100 border border-neutral-100 flex items-center justify-center block p-1"
-            >
-              <img
-                src={cat.img}
-                alt={cat.label}
-                className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
-              <div className="absolute bottom-2.5 left-2.5 right-2.5 text-white">
-                <div className="text-xs font-bold">{cat.label}</div>
-                <div className="text-[10px] text-white/70">{cat.sub}</div>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      {/* 2. SECCION: OTRAS MARCAS */}
-      <section className="py-8 md:py-12 border-b border-neutral-100 max-w-5xl mx-auto px-4 w-full">
-        <div className="flex items-end justify-between mb-4">
-          <div>
-            <span className="text-[10px] font-bold tracking-widest text-neutral-400 uppercase">
-              Prendas nuevas con etiqueta
-            </span>
-            <h2 className="text-[20px] md:text-[22px] font-bold text-neutral-900 tracking-tight">
-              Otras Marcas
-            </h2>
-            <p className="text-[13px] text-neutral-500 mt-0.5">
-              Piezas nuevas de marcas reconocidas seleccionadas exclusivamente para Teziutlan.
-            </p>
-          </div>
-          <Link
-            to="/catalogo"
-            search={{ condicion: "nuevo" }}
-            className="text-xs font-semibold text-neutral-600 hover:text-black inline-flex items-center gap-1 flex-shrink-0 ml-2"
-          >
-            Ver nuevas <ChevronRight className="w-3.5 h-3.5" />
-          </Link>
-        </div>
-
-        {/* Grid de 2 en movil */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 md:gap-4">
-          {products
-            .filter((p) => p.label === "NUEVO" || p.condition.startsWith("nuevo"))
-            .concat(products.filter((p) => p.brand === "LEVI'S" || p.brand === "NIKE"))
-            .slice(0, 4)
-            .map((p) => (
-              <ProductCard key={p.id} product={p} />
-            ))}
-        </div>
-      </section>
-
-      {/* 3. SECCION: SELECCIONADA */}
-      <section className="py-8 md:py-12 border-b border-neutral-100 max-w-5xl mx-auto px-4 w-full bg-neutral-50/50">
-        <div className="flex items-end justify-between mb-4">
-          <div>
-            <span className="text-[10px] font-bold tracking-widest text-neutral-400 uppercase">
-              Curaduria individual
-            </span>
-            <h2 className="text-[20px] md:text-[22px] font-bold text-neutral-900 tracking-tight">
-              Seleccionada
-            </h2>
-            <p className="text-[13px] text-neutral-500 mt-0.5">
-              Prenda por prenda inspeccionada, limpia y en excelente estado. Piezas unicas con medidas reales.
-            </p>
-          </div>
-          <Link
-            to="/catalogo"
-            search={{ condicion: "excelente" }}
-            className="text-xs font-semibold text-neutral-600 hover:text-black inline-flex items-center gap-1 flex-shrink-0 ml-2"
-          >
-            Ver catalogo <ChevronRight className="w-3.5 h-3.5" />
-          </Link>
-        </div>
-
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 md:gap-4">
-          {products
-            .filter((p) => p.label === "SELECCIONADA" && p.price > 0 && p.id !== "lote-completo")
-            .slice(0, 4)
-            .map((p) => (
-              <ProductCard key={p.id} product={p} />
-            ))}
-        </div>
-      </section>
-
-      {/* SECCION ESPECIAL: LOTE COMPLETO (TODA LA ROPA JUNTA — ENVIO GRATIS) */}
+      {/* 1. SECCIÓN: LOTE COMPLETO (ARRIBA, SOLITO, CON SU TOTAL EXACTO) */}
       <section className="py-10 md:py-14 bg-neutral-950 text-white w-full border-b border-neutral-900">
         <div className="max-w-5xl mx-auto px-4">
-          <div className="bg-neutral-900/90 border border-neutral-800 rounded-sm p-6 md:p-8 grid md:grid-cols-2 gap-8 items-center">
+          <div className="bg-neutral-900/90 border border-neutral-800 rounded-sm p-5 sm:p-8 grid md:grid-cols-2 gap-8 items-center">
             <div>
               <div className="flex flex-wrap items-center gap-2 mb-3">
-                <span className="bg-emerald-600 text-white text-[10px] font-black tracking-widest px-2 py-0.5 rounded-xs uppercase">
+                <span className="bg-amber-400 text-black text-[9px] font-black tracking-widest px-2 py-0.5 rounded-xs uppercase">
                   OFERTA ESPECIAL
                 </span>
-                <span className="bg-white/10 text-neutral-300 text-[10px] font-semibold tracking-wider px-2 py-0.5 rounded-xs">
-                  ENVIO A DOMICILIO GRATIS
+                <span className="bg-emerald-600 text-white text-[9px] font-bold tracking-widest px-2 py-0.5 rounded-xs uppercase">
+                  ENVÍO A DOMICILIO GRATIS
                 </span>
               </div>
 
-              <h2 className="text-2xl md:text-3xl font-black tracking-tight text-white leading-tight">
+              <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-white leading-tight">
                 Lote Completo — Toda la Ropa Junta
               </h2>
 
               <p className="text-[13px] text-neutral-300 mt-2.5 leading-relaxed">
-                Adquiere toda la coleccion de la tienda en una sola compra. 18 piezas en total seleccionadas y revisadas una a una, listas para usar o revender.
+                Llévate la colección completa en una sola compra. <strong>18 piezas en total</strong>: 16 prendas seleccionadas y 2 de regalo incluidas sin costo.
               </p>
 
-              {/* Precios */}
+              {/* Precios exactos: separado $2,230 | lote $1,830 | ahorro $400 */}
               <div className="mt-4 flex items-baseline gap-3">
                 <span className="text-3xl font-black text-amber-400">$1,830 MXN</span>
                 <span className="text-base text-neutral-500 line-through font-semibold">$2,230 MXN</span>
@@ -286,23 +165,23 @@ Me indican disponibilidad y datos para la entrega?`;
                 </span>
               </div>
 
-              {/* Beneficios incluidos */}
+              {/* Desglose exacto de piezas */}
               <ul className="mt-4 space-y-2 text-xs text-neutral-300 font-medium">
                 <li className="flex items-center gap-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-amber-400 flex-shrink-0" />
-                  <span><strong>15 prendas de marca:</strong> Levi's, Nike, American Eagle, ANDREA, gorras NY y pantalones.</span>
+                  <span><strong>16 prendas pagadas:</strong> Levi's, Nike, American Eagle, ANDREA, 2 gorras NY y pantalones de marca.</span>
                 </li>
                 <li className="flex items-center gap-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 flex-shrink-0" />
-                  <span><strong>2 prendas de regalo:</strong> Blusita artesanal bordada + mayon negro sin costo.</span>
+                  <span><strong>2 prendas de regalo:</strong> Blusita artesanal con bordado rojo + mayón negro gratis.</span>
                 </li>
                 <li className="flex items-center gap-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-white flex-shrink-0" />
-                  <span><strong>Envio a domicilio gratis</strong> en todo Teziutlan.</span>
+                  <span><strong>Envío local a domicilio GRATIS</strong> en todo Teziutlán.</span>
                 </li>
               </ul>
 
-              {/* Botones de accion */}
+              {/* Botones */}
               <div className="mt-6 flex flex-col sm:flex-row gap-2.5">
                 <button
                   onClick={handleBuyLoteWhatsApp}
@@ -316,22 +195,22 @@ Me indican disponibilidad y datos para la entrega?`;
                   className="bg-white/10 hover:bg-white hover:text-black text-white text-xs font-semibold py-3 px-4 rounded-xs border border-white/20 tracking-wider flex items-center justify-center gap-2 transition-colors"
                 >
                   <ShoppingBag className="w-3.5 h-3.5" />
-                  {lotAdded ? "Agregado al carrito" : "Agregar al carrito"}
+                  {loteAdded ? "Agregado al carrito" : "Agregar al carrito"}
                 </button>
               </div>
             </div>
 
-            {/* Galeria del lote — 6 prendas representativas */}
+            {/* Galería de prendas del lote */}
             <div className="grid grid-cols-3 gap-2">
               {[
                 { src: "/products/p8.jpg", name: "Levi's" },
                 { src: "/products/p10.jpg", name: "Nike" },
-                { src: "/products/p9.jpg", name: "Gorras NY" },
-                { src: "/products/p1.jpg", name: "APT.9" },
+                { src: "/products/p9.jpg", name: "2 Gorras NY" },
                 { src: "/products/p17.jpg", name: "American Eagle" },
+                { src: "/products/p1.jpg", name: "APT.9" },
                 { src: "/products/p12.jpg", name: "ANDREA" },
               ].map((item, i) => (
-                <div key={i} className="aspect-[3/4] bg-neutral-950 rounded-xs overflow-hidden border border-neutral-800 p-1 flex items-center justify-center relative group">
+                <div key={i} className="aspect-[3/4] bg-neutral-950 rounded-xs overflow-hidden border border-neutral-800 p-1 flex items-center justify-center relative">
                   <img src={item.src} alt={item.name} className="w-full h-full object-contain" />
                   <span className="absolute bottom-1 text-[9px] font-bold text-neutral-400 bg-black/70 px-1 rounded-xs">
                     {item.name}
@@ -343,23 +222,88 @@ Me indican disponibilidad y datos para la entrega?`;
         </div>
       </section>
 
-      {/* 4. SECCION: PRENDAS DESTACADAS — CARRUSEL HORIZONTAL (4-6 PRENDAS) */}
+      {/* 2. SECCIÓN: NUEVO (OTRAS MARCAS) */}
       <section className="py-8 md:py-12 border-b border-neutral-100 max-w-5xl mx-auto px-4 w-full">
         <div className="flex items-end justify-between mb-4">
           <div>
             <span className="text-[10px] font-bold tracking-widest text-neutral-400 uppercase">
-              Favoritas de la semana
+              Prendas nuevas con o sin etiqueta
+            </span>
+            <h2 className="text-[20px] md:text-[22px] font-bold text-neutral-900 tracking-tight">
+              Nuevo
+            </h2>
+            <p className="text-[13px] text-neutral-500 mt-0.5">
+              Piezas nuevas seleccionadas de marcas reconocidas para entrega inmediata.
+            </p>
+          </div>
+          <Link
+            to="/catalogo"
+            search={{ condicion: "nuevo" }}
+            className="text-xs font-semibold text-neutral-600 hover:text-black inline-flex items-center gap-1 flex-shrink-0 ml-2"
+          >
+            Ver catálogo nuevo <ChevronRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 md:gap-4">
+          {products
+            .filter((p) => p.label === "NUEVO" || p.condition.startsWith("nuevo"))
+            .slice(0, 4)
+            .map((p) => (
+              <ProductCard key={p.id} product={p} />
+            ))}
+        </div>
+      </section>
+
+      {/* 3. SECCIÓN: SELECCIONADA (ROPA DE USO REVISADA) */}
+      <section className="py-8 md:py-12 border-b border-neutral-100 max-w-5xl mx-auto px-4 w-full bg-neutral-50/50">
+        <div className="flex items-end justify-between mb-4">
+          <div>
+            <span className="text-[10px] font-bold tracking-widest text-neutral-400 uppercase">
+              Prendas de uso en excelente estado
+            </span>
+            <h2 className="text-[20px] md:text-[22px] font-bold text-neutral-900 tracking-tight">
+              Seleccionada
+            </h2>
+            <p className="text-[13px] text-neutral-500 mt-0.5">
+              Inspeccionada prenda por prenda, limpia y sin desgaste notable.
+            </p>
+          </div>
+          <Link
+            to="/catalogo"
+            search={{ condicion: "como-nuevo" }}
+            className="text-xs font-semibold text-neutral-600 hover:text-black inline-flex items-center gap-1 flex-shrink-0 ml-2"
+          >
+            Ver seleccionadas <ChevronRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 md:gap-4">
+          {products
+            .filter((p) => p.label === "SELECCIONADA")
+            .slice(0, 4)
+            .map((p) => (
+              <ProductCard key={p.id} product={p} />
+            ))}
+        </div>
+      </section>
+
+      {/* 4. SECCIÓN: PRENDAS DESTACADAS — CARRUSEL HORIZONTAL */}
+      <section className="py-8 md:py-12 border-b border-neutral-100 max-w-5xl mx-auto px-4 w-full">
+        <div className="flex items-end justify-between mb-4">
+          <div>
+            <span className="text-[10px] font-bold tracking-widest text-neutral-400 uppercase">
+              Selección de la semana
             </span>
             <h2 className="text-[20px] md:text-[22px] font-bold text-neutral-900 tracking-tight">
               Prendas Destacadas
             </h2>
           </div>
           <div className="text-[11px] text-neutral-400">
-            Desliza para ver mas
+            Desliza a los lados
           </div>
         </div>
 
-        {/* Carrusel horizontal deslizante estilo Nike */}
         <div className="flex gap-3 overflow-x-auto pb-4 snap-x snap-mandatory no-scrollbar -mx-4 px-4">
           {featuredProducts.map((p) => (
             <div key={p.id} className="min-w-[170px] sm:min-w-[210px] max-w-[210px] flex-shrink-0 snap-start">
@@ -369,17 +313,17 @@ Me indican disponibilidad y datos para la entrega?`;
         </div>
       </section>
 
-      {/* 5. SECCION: THE LION ORIGINALS — PROXIMAMENTE (DROP 01, 2027) */}
+      {/* 5. SECCIÓN: THE LION ORIGINALS — TIENDA OFICIAL (PRÓXIMAMENTE 2027) */}
       <section id="originals" className="py-12 md:py-16 bg-neutral-950 text-white w-full border-b border-neutral-900">
         <div className="max-w-5xl mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-8 items-center">
             <div>
               <div className="flex items-center gap-2 mb-3">
                 <span className="text-[9px] font-bold tracking-widest bg-amber-400 text-black px-2 py-0.5 rounded-xs uppercase">
-                  DROP 01
+                  TIENDA OFICIAL
                 </span>
-                <span className="text-[11px] font-mono text-neutral-400 tracking-wider">
-                  2027
+                <span className="text-[9px] font-bold tracking-widest border border-neutral-700 text-neutral-300 px-2 py-0.5 rounded-xs uppercase">
+                  PRÓXIMAMENTE 2027
                 </span>
               </div>
 
@@ -388,7 +332,7 @@ Me indican disponibilidad y datos para la entrega?`;
               </h2>
 
               <p className="text-[13px] text-neutral-400 mt-3 leading-relaxed">
-                Nuestra propia linea de ropa de gym, tenis, mochilas y accesorios deportivos. Hecha para entrenar duro, silueta limpia y corte comodo.
+                Nuestra propia marca oficial de ropa deportiva, tenis, mochilas y accesorios. Colección Drop 01 en proceso de confección exclusiva.
               </p>
 
               <div className="mt-4 flex flex-wrap gap-2 text-[11px] text-neutral-300 font-medium">
@@ -398,7 +342,7 @@ Me indican disponibilidad y datos para la entrega?`;
                 <span className="bg-neutral-900 border border-neutral-800 px-2.5 py-1 rounded-xs">Accesorios</span>
               </div>
 
-              {/* Formulario lista de espera por WhatsApp */}
+              {/* Sin precios ni botones de compra — solo lista de espera */}
               <form onSubmit={handleWaitlistSubmit} className="mt-6 flex flex-col sm:flex-row gap-2 max-w-sm">
                 <input
                   type="text"
@@ -415,47 +359,78 @@ Me indican disponibilidad y datos para la entrega?`;
                 </button>
               </form>
               <p className="text-[10px] text-neutral-500 mt-2">
-                Aviso prioritario por WhatsApp antes del lanzamiento oficial.
+                Sin venta activa todavía. Notificación directa por WhatsApp al salir el Drop 01.
               </p>
             </div>
 
             <div className="relative aspect-[4/3] rounded-sm overflow-hidden bg-neutral-900 border border-neutral-800">
               <img
                 src="https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=800&q=80"
-                alt="The Lion Originals Drop 01"
+                alt="The Lion Originals Tienda Oficial"
                 className="w-full h-full object-cover opacity-60"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
               <div className="absolute bottom-4 left-4 right-4 text-white">
-                <div className="text-[11px] font-bold text-amber-400 tracking-wider">PROXIMAMENTE</div>
-                <div className="text-sm font-semibold">Drop 01 · Coleccion Gym &amp; Street</div>
+                <div className="text-[10px] font-bold text-amber-400 tracking-wider uppercase">Marca Oficial en Preparación</div>
+                <div className="text-sm font-semibold">Drop 01 · 2027</div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 6. SECCION: DONACIONES / COMUNIDAD (SIN CUENTAS, DIRECTO POR WHATSAPP) */}
-      <section id="donaciones" className="py-12 md:py-16 bg-white border-b border-neutral-100 max-w-5xl mx-auto px-4 w-full">
+      {/* 6. SECCIÓN: DONACIONES / COMUNIDAD (LISTA DE PRENDAS DISPONIBLES + FORMULARIO) */}
+      <section id="donaciones" className="py-12 md:py-16 bg-white border-b border-neutral-100 max-w-5xl mx-auto px-4 w-full scroll-mt-14">
         <div className="text-center max-w-md mx-auto mb-8">
           <div className="inline-flex items-center gap-1.5 text-[11px] font-bold tracking-widest text-emerald-800 uppercase bg-emerald-50 px-2.5 py-1 rounded-full mb-2">
             <HeartHandshake className="w-3.5 h-3.5 text-emerald-600" />
-            Iniciativa Comunitaria
+            Iniciativa Comunitaria Teziutlán
           </div>
           <h2 className="text-[20px] md:text-[22px] font-bold text-neutral-900 tracking-tight">
-            Donaciones / Comunidad
+            Donaciones &amp; Ropa Gratis
           </h2>
           <p className="text-[13px] text-neutral-500 mt-1">
-            Recibimos ropa en buen estado que ya no uses y la ponemos a disposicion gratis para familias en Teziutlan. Sin cuentas de usuario.
+            Prendas en buen estado que se entregan completamente gratis para personas y familias de Teziutlán que lo necesiten.
           </p>
         </div>
 
+        {/* LISTA REAL DE PRENDAS DISPONIBLES PARA DONAR */}
+        <div className="mb-8">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-700 mb-3 text-center sm:text-left">
+            Prendas disponibles para donación hoy:
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            {DONATION_ITEMS.map((item) => (
+              <div
+                key={item.id}
+                className="p-3 bg-neutral-50 rounded-sm border border-neutral-200 flex sm:flex-col gap-3 items-center sm:items-start"
+              >
+                <div className="w-20 h-24 sm:w-full sm:h-36 bg-white rounded-xs border border-neutral-200 overflow-hidden flex items-center justify-center p-1 flex-shrink-0">
+                  <img src={item.image} alt={item.name} className="w-full h-full object-contain" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <span className="text-[9px] font-black tracking-widest text-white bg-emerald-600 px-1.5 py-0.5 rounded-xs uppercase">
+                    GRATIS
+                  </span>
+                  <h4 className="text-xs font-bold text-neutral-900 mt-1 truncate">{item.name}</h4>
+                  <p className="text-[11px] text-neutral-500">{item.size} · {item.category}</p>
+                  <p className="text-[10px] text-neutral-600 mt-1 line-clamp-2">{item.detail}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* FORMULARIO DIRECTO POR WHATSAPP */}
         <div className="max-w-md mx-auto bg-neutral-50 p-5 rounded-sm border border-neutral-200">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-800 mb-1 text-center">
+            Solicitar prenda o donar ropa
+          </h3>
+          <p className="text-[11px] text-neutral-500 text-center mb-3">
+            Coordinamos la entrega sin costo ni trámites complicados:
+          </p>
           <form onSubmit={handleDonationSubmit} className="space-y-3">
             <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-neutral-600 mb-1.5">
-                Que deseas hacer?
-              </label>
               <div className="grid grid-cols-2 gap-2">
                 <button
                   type="button"
@@ -484,14 +459,14 @@ Me indican disponibilidad y datos para la entrega?`;
 
             <div>
               <label className="block text-[11px] font-bold uppercase tracking-wider text-neutral-600 mb-1">
-                {donationType === "donar" ? "Prendas que deseas donar" : "Tallas o prendas que necesitas"}
+                {donationType === "donar" ? "Prendas que deseas donar:" : "¿Qué prenda o talla necesitas?"}
               </label>
               <textarea
                 rows={2}
                 placeholder={
                   donationType === "donar"
-                    ? "Ej. 2 pantalones de nino talla 10, sueter de dama..."
-                    : "Ej. Ropa para nino de 8 anos o playera talla M..."
+                    ? "Ej. Pantalón de niño talla 10, suéter de mujer..."
+                    : "Ej. Solicito la blusita artesanal talla 6 o ropa para niño..."
                 }
                 value={donationDetail}
                 onChange={(e) => setDonationDetail(e.target.value)}

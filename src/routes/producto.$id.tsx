@@ -3,12 +3,14 @@ import { useState, useEffect } from "react";
 import { ArrowLeft, MessageCircle, ShoppingBag, ShieldCheck, Tag } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
-import { formatPrice, products, STORE_PHONE, conditionLabels } from "@/lib/products";
+import { formatPrice, products, LOTE_COMPLETO, STORE_PHONE, conditionLabels } from "@/lib/products";
 import { useCart } from "@/lib/cart";
 
 export const Route = createFileRoute("/producto/$id")({
   loader: ({ params }) => {
-    const product = products.find((p) => p.id === params.id);
+    // Buscar en productos normales o en el Lote Completo
+    const allItems = [...products, LOTE_COMPLETO];
+    const product = allItems.find((p) => p.id === params.id);
     if (!product) throw notFound();
     return { product };
   },
@@ -26,9 +28,9 @@ export const Route = createFileRoute("/producto/$id")({
   notFoundComponent: () => (
     <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center">
       <h2 className="text-xl font-bold mb-2">Prenda no encontrada</h2>
-      <p className="text-neutral-500 mb-6 text-xs">Esta prenda ya no esta disponible o cambio de enlace.</p>
+      <p className="text-neutral-500 mb-6 text-xs">Esta prenda ya no está disponible o cambió de enlace.</p>
       <Link to="/catalogo" className="bg-black text-white px-5 py-2 text-xs font-semibold rounded-xs">
-        Ver catalogo
+        Ver catálogo
       </Link>
     </div>
   ),
@@ -37,6 +39,9 @@ export const Route = createFileRoute("/producto/$id")({
 
 function ProductoDetalle() {
   const { product } = Route.useLoaderData();
+  const gallery = product.images && product.images.length > 0 ? product.images : [product.image];
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
+
   const hasSizes = product.sizes.length > 0;
   const [size, setSize] = useState<string | number | null>(
     product.sizes.length === 1 ? product.sizes[0] : null
@@ -51,7 +56,7 @@ function ProductoDetalle() {
 
   const handleAddToCart = () => {
     if (hasSizes && !size) return;
-    addItem(product, size ?? "Unica", 1);
+    addItem(product, size ?? "Única", 1);
   };
 
   const handleDirectWhatsApp = () => {
@@ -60,38 +65,66 @@ function ProductoDetalle() {
 
 *Producto:* ${product.name} ${selectedSizeText}
 *Precio:* ${formatPrice(product.price)}
-*Condicion:* ${conditionLabels[product.condition] || product.condition}
+*Condición:* ${conditionLabels[product.condition] || product.condition}
 *Enlace:* ${window.location.href}
 
-Sigue disponible para entrega en Teziutlan?`;
+¿Sigue disponible para entrega en Teziutlán?`;
     window.open(`https://wa.me/${STORE_PHONE}?text=${encodeURIComponent(message)}`, "_blank");
   };
 
   return (
-    <div className="min-h-screen bg-white text-black flex flex-col">
+    <div className="min-h-screen bg-white text-black flex flex-col font-sans">
       <SiteHeader />
       <div className="max-w-4xl mx-auto px-4 pt-4 pb-16 flex-1 w-full">
         <Link
           to="/catalogo"
           className="inline-flex items-center gap-1.5 text-xs font-semibold text-neutral-600 hover:text-black mb-4"
         >
-          <ArrowLeft className="w-3.5 h-3.5" /> Volver al catalogo
+          <ArrowLeft className="w-3.5 h-3.5" /> Volver al catálogo
         </Link>
 
         <div className="grid md:grid-cols-2 gap-8 items-start">
-          {/* Imagen principal completa sin recortes */}
-          <div className="bg-neutral-50 aspect-square sm:aspect-[4/5] rounded-sm overflow-hidden relative border border-neutral-100 flex items-center justify-center p-3">
-            <img
-              src={product.image}
-              alt={product.name}
-              className="w-full h-full object-contain"
-            />
-            <div className="absolute top-3 left-3 bg-black/85 text-white px-2 py-0.5 text-[10px] font-bold rounded-xs tracking-wider">
-              {product.label}
+          {/* GALERÍA ESTILO TEMU / NIKE / AMAZON (3:4 VERTICAL CON CONTADOR FLOTANTE 1/N) */}
+          <div className="space-y-3">
+            <div className="bg-neutral-50 aspect-[3/4] rounded-sm overflow-hidden relative border border-neutral-200 flex items-center justify-center p-2">
+              <img
+                src={gallery[activeImageIndex]}
+                alt={`${product.name} - ${activeImageIndex + 1}`}
+                className="w-full h-full object-contain"
+              />
+
+              {/* Etiqueta de tipo de prenda */}
+              <div className="absolute top-3 left-3 bg-black/85 text-white px-2 py-0.5 text-[10px] font-bold rounded-xs tracking-wider">
+                {product.label}
+              </div>
+
+              {/* Indicador de foto flotante estilo Temu (ej. 1/4) */}
+              {gallery.length > 1 && (
+                <div className="absolute bottom-3 right-3 bg-black/70 backdrop-blur-xs text-white px-2 py-0.5 text-[11px] font-mono rounded-full font-bold">
+                  {activeImageIndex + 1}/{gallery.length}
+                </div>
+              )}
             </div>
+
+            {/* Miniaturas si hay más de 1 foto */}
+            {gallery.length > 1 && (
+              <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
+                {gallery.map((img, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setActiveImageIndex(idx)}
+                    className={`w-14 h-16 rounded-xs overflow-hidden border p-0.5 flex-shrink-0 bg-neutral-50 transition-colors ${
+                      activeImageIndex === idx ? "border-black ring-1 ring-black" : "border-neutral-200 opacity-70 hover:opacity-100"
+                    }`}
+                  >
+                    <img src={img} alt="Miniatura" className="w-full h-full object-contain" />
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
-          {/* Info */}
+          {/* INFORMACIÓN DEL PRODUCTO */}
           <div>
             <div className="text-[11px] uppercase tracking-wider text-neutral-400 font-semibold">
               {product.brand} · {product.category.toUpperCase()}
@@ -110,18 +143,18 @@ Sigue disponible para entrega en Teziutlan?`;
               )}
             </div>
 
-            {/* Condicion y entrega */}
+            {/* Condición y entrega profesional */}
             <div className="mt-4 p-3 bg-neutral-50 rounded-xs border border-neutral-200 text-xs space-y-1.5 text-neutral-700">
               <div className="flex items-center gap-2">
                 <Tag className="w-3.5 h-3.5 text-neutral-700" />
                 <span>
-                  <strong>Estado:</strong> {conditionLabels[product.condition] || "Nuevo con etiqueta"}
+                  <strong>Condición:</strong> {conditionLabels[product.condition] || "Excelente estado"}
                 </span>
               </div>
               <div className="flex items-center gap-2">
                 <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
                 <span>
-                  <strong>Entrega en Teziutlan:</strong> Envio a domicilio $30 MXN o entrega personal en punto centrico gratis.
+                  <strong>Entrega en Teziutlán:</strong> Envío a domicilio $30 MXN o entrega personal en punto céntrico gratis.
                 </span>
               </div>
             </div>
@@ -155,7 +188,7 @@ Sigue disponible para entrega en Teziutlan?`;
               </div>
             )}
 
-            {/* Botones */}
+            {/* Botones de acción */}
             <div className="mt-6 space-y-2.5">
               <button
                 onClick={handleAddToCart}
@@ -175,12 +208,17 @@ Sigue disponible para entrega en Teziutlan?`;
               </button>
             </div>
 
-            {/* Descripcion */}
+            {/* Descripción y medidas exactas */}
             <div className="mt-6 border-t border-neutral-100 pt-4">
               <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-800 mb-1.5">
-                Detalles
+                Detalles de la prenda
               </h3>
               <p className="text-neutral-600 text-xs leading-relaxed">{product.description}</p>
+              {product.measurements && (
+                <p className="text-neutral-500 text-[11px] mt-2 font-mono">
+                  Medidas: {product.measurements}
+                </p>
+              )}
             </div>
           </div>
         </div>

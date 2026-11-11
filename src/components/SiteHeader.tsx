@@ -2,7 +2,7 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { Search, ShoppingBag, Menu, X } from "lucide-react";
 import { useCart } from "@/lib/cart";
 import { useState, useEffect } from "react";
-import { STORE_PHONE, STORE_PHONE_DISPLAY } from "@/lib/products";
+import { STORE_PHONE_DISPLAY } from "@/lib/products";
 
 export function SiteHeader() {
   const { open, totalItems } = useCart();
@@ -34,11 +34,11 @@ export function SiteHeader() {
   };
 
   const navLinks = [
-    { label: "Tienda Oficial", to: "/catalogo" as const, search: undefined },
-    { label: "Otras Marcas", to: "/catalogo" as const, search: { condicion: "nuevo" } },
-    { label: "Seleccionada", to: "/catalogo" as const, search: { condicion: "excelente" } },
-    { label: "Originals", to: "/" as const, hash: "originals" },
-    { label: "Donaciones", to: "/" as const, hash: "donaciones" },
+    { label: "Catálogo", to: "/catalogo" as const, search: undefined, hash: undefined },
+    { label: "Nuevo", to: "/catalogo" as const, search: { condicion: "nuevo" }, hash: undefined },
+    { label: "Seleccionada", to: "/catalogo" as const, search: { condicion: "como-nuevo" }, hash: undefined },
+    { label: "The Lion Originals", to: "/" as const, search: undefined, hash: "originals" },
+    { label: "Donaciones", to: "/" as const, search: undefined, hash: "donaciones" },
   ];
 
   return (
@@ -74,6 +74,7 @@ export function SiteHeader() {
                 key={link.label}
                 to={link.to}
                 search={link.search as any}
+                hash={link.hash}
                 className="hover:text-black py-1 transition-colors"
               >
                 {link.label}
@@ -168,6 +169,7 @@ export function SiteHeader() {
                   key={link.label}
                   to={link.to}
                   search={link.search as any}
+                  hash={link.hash}
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="block py-2.5 px-2 text-sm font-medium text-neutral-800 hover:text-black hover:bg-neutral-50 rounded transition-colors"
                 >
@@ -179,13 +181,13 @@ export function SiteHeader() {
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="block py-2.5 px-2 text-sm font-semibold text-black bg-neutral-100 rounded mt-2"
               >
-                Ver todo el catalogo
+                Ver todo el catálogo
               </Link>
             </nav>
 
             <div className="mt-auto pt-4 border-t border-neutral-100 text-[11px] text-neutral-400">
-              <p>Teziutlan, Puebla</p>
-              <p className="mt-0.5">Envio a domicilio $30 MXN o entrega en centro gratis</p>
+              <p>Teziutlán, Puebla</p>
+              <p className="mt-0.5">Envío a domicilio $30 MXN o entrega en centro gratis</p>
             </div>
           </div>
         </div>
