@@ -37,7 +37,8 @@ const CATEGORY_FILTERS = [
 
 const CONDITION_FILTERS = [
   { label: "Todos", value: undefined },
-  { label: "Nuevo sin etiqueta", value: "nuevo" },
+  { label: "Nuevo con etiqueta", value: "nuevo-con-etiqueta" },
+  { label: "Nuevo sin etiqueta", value: "nuevo-sin-etiqueta" },
   { label: "Como nuevo", value: "como-nuevo" },
   { label: "Excelente estado", value: "excelente" },
   { label: "Buen estado", value: "buen-estado" },
@@ -56,7 +57,15 @@ function Catalogo() {
     }
 
     if (condicion) {
-      res = res.filter((p) => p.condition === condicion);
+      if (condicion === "nuevo") {
+        res = res.filter(
+          (p) =>
+            p.condition === "nuevo-con-etiqueta" ||
+            p.condition === "nuevo-sin-etiqueta"
+        );
+      } else {
+        res = res.filter((p) => p.condition === condicion);
+      }
     }
 
     if (q) {

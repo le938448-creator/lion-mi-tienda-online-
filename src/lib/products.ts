@@ -1,5 +1,10 @@
 export type ProductLabel = "NUEVO" | "SELECCIONADA" | "DONACION";
-export type ProductCondition = "nuevo" | "como-nuevo" | "excelente" | "buen-estado";
+export type ProductCondition =
+  | "nuevo-con-etiqueta"
+  | "nuevo-sin-etiqueta"
+  | "como-nuevo"
+  | "excelente"
+  | "buen-estado";
 
 export type Product = {
   id: string;
@@ -36,7 +41,8 @@ export const brands = [
 ];
 
 export const conditionLabels: Record<ProductCondition, string> = {
-  "nuevo": "Nuevo sin etiqueta",
+  "nuevo-con-etiqueta": "Nuevo con etiqueta",
+  "nuevo-sin-etiqueta": "Nuevo sin etiqueta",
   "como-nuevo": "Como nuevo",
   "excelente": "Excelente estado",
   "buen-estado": "Buen estado",
@@ -171,11 +177,11 @@ export const products: Product[] = [
     image: "/products/p9.jpg",
     category: "accesorios",
     label: "NUEVO",
-    condition: "nuevo",
-    conditionLabel: "Nuevo sin etiqueta",
+    condition: "nuevo-con-etiqueta",
+    conditionLabel: "Nuevo con etiqueta",
     sizes: ["Ajustable"],
     measurements: "Broche trasero regulable",
-    description: "Nuevas. Gorra urbana con visera curva estructurada. Disponible en rojo y negro.",
+    description: "Nuevas con etiqueta. Gorra urbana con visera curva estructurada. Disponible en rojo y negro.",
     isNew: true,
   },
   {

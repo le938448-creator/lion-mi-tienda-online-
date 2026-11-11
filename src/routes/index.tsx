@@ -165,7 +165,7 @@ function HomePage() {
         {/* Grid de 2 en movil */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 md:gap-4">
           {products
-            .filter((p) => p.label === "NUEVO" || p.condition === "nuevo")
+            .filter((p) => p.label === "NUEVO" || p.condition.startsWith("nuevo"))
             .concat(products.filter((p) => p.brand === "LEVI'S" || p.brand === "NIKE"))
             .slice(0, 4)
             .map((p) => (
