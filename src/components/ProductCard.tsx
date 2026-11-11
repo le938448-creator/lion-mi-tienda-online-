@@ -26,11 +26,11 @@ export function ProductCard({ product }: { product: Product }) {
 
   return (
     <Link to="/producto/$id" params={{ id: product.id }} className="group block">
-      <div className="relative aspect-[4/5] bg-neutral-100 rounded-sm overflow-hidden">
+      <div className="relative aspect-[4/5] bg-neutral-100 rounded-sm overflow-hidden flex items-center justify-center p-1">
         <img
           src={product.image}
           alt={product.name}
-          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+          className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
           loading="lazy"
         />
 
@@ -49,7 +49,7 @@ export function ProductCard({ product }: { product: Product }) {
           className={`absolute bottom-2 right-2 p-1.5 rounded-full transition-all ${
             added
               ? "bg-emerald-600 text-white opacity-100"
-              : "bg-white/90 text-black hover:bg-black hover:text-white opacity-90 md:opacity-0 md:group-hover:opacity-100 shadow-xs"
+              : "bg-white/95 text-black hover:bg-black hover:text-white opacity-90 md:opacity-0 md:group-hover:opacity-100 shadow-sm"
           }`}
           aria-label="Agregar"
         >

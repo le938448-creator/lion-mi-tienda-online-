@@ -73,7 +73,7 @@ export function SiteFooter() {
           <div className="space-y-2.5 text-xs text-neutral-400">
             <div className="flex items-start gap-2">
               <Truck className="w-3.5 h-3.5 text-amber-400 flex-shrink-0 mt-0.5" />
-              <span>Moto servicio en Teziutlan: $30 MXN · Entrega en el centro: Gratis</span>
+              <span>Envio a domicilio en Teziutlan ($30 MXN) · Entrega en punto centrico (Gratis)</span>
             </div>
             <div className="flex items-start gap-2">
               <ShieldCheck className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0 mt-0.5" />

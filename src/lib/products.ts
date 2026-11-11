@@ -40,7 +40,8 @@ export const brands = [
   "NEW YORK",
 ];
 
-export const conditionLabels: Record<ProductCondition, string> = {
+export const conditionLabels: Record<string, string> = {
+  "nuevo": "Nuevo con etiqueta",
   "nuevo-con-etiqueta": "Nuevo con etiqueta",
   "nuevo-sin-etiqueta": "Nuevo sin etiqueta",
   "como-nuevo": "Como nuevo",
@@ -49,6 +50,22 @@ export const conditionLabels: Record<ProductCondition, string> = {
 };
 
 export const products: Product[] = [
+  {
+    id: "lote-completo",
+    name: "Lote Completo (18 piezas + 2 regalos)",
+    brand: "THE LION & CO",
+    price: 1830,
+    oldPrice: 2230,
+    image: "/products/p8.jpg",
+    category: "mujer",
+    label: "SELECCIONADA",
+    condition: "excelente",
+    conditionLabel: "Lote completo",
+    sizes: ["18 piezas"],
+    measurements: "Tallas variadas: dama, caballero, ninos y accesorios",
+    description: "Toda la coleccion junta por un solo precio. Incluye 15 prendas seleccionadas (Levi's, Nike, American Eagle, ANDREA, gorras NY, pantalones de marca), mas 2 prendas de regalo sin costo. Envio a domicilio gratis en Teziutlan.",
+    isOffer: true,
+  },
   {
     id: "p1",
     name: "Pantalon APT.9 azul oscuro",

@@ -185,7 +185,7 @@ export function SiteHeader() {
 
             <div className="mt-auto pt-4 border-t border-neutral-100 text-[11px] text-neutral-400">
               <p>Teziutlan, Puebla</p>
-              <p className="mt-0.5">Entregas en moto $30 o centro gratis</p>
+              <p className="mt-0.5">Envio a domicilio $30 MXN o entrega en centro gratis</p>
             </div>
           </div>
         </div>

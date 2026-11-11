@@ -79,12 +79,12 @@ Sigue disponible para entrega en Teziutlan?`;
         </Link>
 
         <div className="grid md:grid-cols-2 gap-8 items-start">
-          {/* Imagen principal */}
-          <div className="bg-neutral-100 aspect-[4/5] rounded-sm overflow-hidden relative">
+          {/* Imagen principal completa sin recortes */}
+          <div className="bg-neutral-50 aspect-square sm:aspect-[4/5] rounded-sm overflow-hidden relative border border-neutral-100 flex items-center justify-center p-3">
             <img
               src={product.image}
               alt={product.name}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-contain"
             />
             <div className="absolute top-3 left-3 bg-black/85 text-white px-2 py-0.5 text-[10px] font-bold rounded-xs tracking-wider">
               {product.label}
@@ -115,13 +115,13 @@ Sigue disponible para entrega en Teziutlan?`;
               <div className="flex items-center gap-2">
                 <Tag className="w-3.5 h-3.5 text-neutral-700" />
                 <span>
-                  <strong>Estado:</strong> {conditionLabels[product.condition] || product.condition}
+                  <strong>Estado:</strong> {conditionLabels[product.condition] || "Nuevo con etiqueta"}
                 </span>
               </div>
               <div className="flex items-center gap-2">
                 <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
                 <span>
-                  <strong>Entrega en Teziutlan:</strong> moto $30 o en el centro gratis.
+                  <strong>Entrega en Teziutlan:</strong> Envio a domicilio $30 MXN o entrega personal en punto centrico gratis.
                 </span>
               </div>
             </div>

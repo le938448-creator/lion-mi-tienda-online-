@@ -8,20 +8,20 @@ export function CartDrawer() {
   const { items, isOpen, setOpen, removeItem, updateQuantity, totalPrice, totalItems, clear } =
     useCart();
 
-  const [shippingMethod, setShippingMethod] = useState<"centro" | "moto">("centro");
+  const [shippingMethod, setShippingMethod] = useState<"centro" | "domicilio">("centro");
   const [customerName, setCustomerName] = useState("");
   const [address, setAddress] = useState("");
 
-  const shippingCost = shippingMethod === "moto" ? 30 : 0;
+  const shippingCost = shippingMethod === "domicilio" ? 30 : 0;
   const grandTotal = totalPrice + shippingCost;
 
   const handleCheckoutWhatsApp = () => {
     if (items.length === 0) return;
 
     const shippingText =
-      shippingMethod === "moto"
-        ? "Envio en moto en Teziutlan (+$30 MXN)"
-        : "Entrega personal en el Centro de Teziutlan (Gratis)";
+      shippingMethod === "domicilio"
+        ? "Envio local a domicilio en Teziutlan (+$30 MXN)"
+        : "Entrega personal en punto centrico de Teziutlan (Gratis)";
 
     const itemsSummary = items
       .map(
@@ -161,7 +161,7 @@ Hola, quiero confirmar la disponibilidad de este pedido para entrega en Teziutla
                         checked={shippingMethod === "centro"}
                         onChange={() => setShippingMethod("centro")}
                       />
-                      <span>Entrega en el Centro (Teziutlan)</span>
+                      <span>Entrega personal en punto centrico</span>
                     </div>
                     <span className="font-bold text-emerald-700">Gratis</span>
                   </label>
@@ -170,10 +170,10 @@ Hola, quiero confirmar la disponibilidad de este pedido para entrega en Teziutla
                       <input
                         type="radio"
                         name="shipping"
-                        checked={shippingMethod === "moto"}
-                        onChange={() => setShippingMethod("moto")}
+                        checked={shippingMethod === "domicilio"}
+                        onChange={() => setShippingMethod("domicilio")}
                       />
-                      <span>Moto servicio en Teziutlan</span>
+                      <span>Envio a domicilio en Teziutlan</span>
                     </div>
                     <span className="font-bold text-black">+$30 MXN</span>
                   </label>
@@ -205,7 +205,7 @@ Hola, quiero confirmar la disponibilidad de este pedido para entrega en Teziutla
                   <div className="text-[16px] font-bold text-black">{formatPrice(grandTotal)}</div>
                 </div>
                 <div className="text-right text-[11px] text-neutral-400">
-                  {shippingCost > 0 ? "Incluye envio en moto" : "Entrega en centro gratis"}
+                  {shippingCost > 0 ? "Incluye envio a domicilio ($30 MXN)" : "Entrega en punto centrico gratis"}
                 </div>
               </div>
 

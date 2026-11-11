@@ -1,10 +1,11 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { ProductCard } from "@/components/ProductCard";
-import { products, formatPrice, STORE_PHONE, STORE_PHONE_DISPLAY } from "@/lib/products";
-import { ArrowRight, ChevronRight, Sparkles, Send, HeartHandshake } from "lucide-react";
+import { products, formatPrice, STORE_PHONE } from "@/lib/products";
+import { useCart } from "@/lib/cart";
+import { ArrowRight, ChevronRight, Sparkles, Send, HeartHandshake, ShoppingBag } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -21,9 +22,14 @@ export const Route = createFileRoute("/")({
 
 function HomePage() {
   const navigate = useNavigate();
+  const { addItem, open } = useCart();
 
-  // 4 a 6 prendas destacadas para el carrusel horizontal
-  const featuredProducts = products.filter((p) => p.price > 0).slice(0, 6);
+  // 4 a 6 prendas destacadas para el carrusel horizontal (excluyendo el lote para mostrar prendas individuales)
+  const featuredProducts = products.filter((p) => p.price > 0 && p.id !== "lote-completo").slice(0, 6);
+
+  // Lote completo
+  const loteProduct = products.find((p) => p.id === "lote-completo");
+  const [lotAdded, setLotAdded] = useState(false);
 
   // Lista de espera Originals
   const [waitlistName, setWaitlistName] = useState("");
@@ -31,6 +37,24 @@ function HomePage() {
   // Donaciones / Comunidad
   const [donationType, setDonationType] = useState<"donar" | "necesito">("donar");
   const [donationDetail, setDonationDetail] = useState("");
+
+  const handleBuyLoteWhatsApp = () => {
+    const text = `*PEDIDO — LOTE COMPLETO THE LION & CO*
+
+Hola, deseo adquirir el *Lote Completo (18 piezas, 2 regalos incluidos)* por *$1,830 MXN* con *Envio a Domicilio Gratis* en Teziutlan.
+
+Me indican disponibilidad y datos para la entrega?`;
+    window.open(`https://wa.me/${STORE_PHONE}?text=${encodeURIComponent(text)}`, "_blank");
+  };
+
+  const handleAddLoteCart = () => {
+    if (loteProduct) {
+      addItem(loteProduct, "18 piezas", 1);
+      setLotAdded(true);
+      setTimeout(() => setLotAdded(false), 1500);
+      open();
+    }
+  };
 
   const handleWaitlistSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -122,12 +146,12 @@ function HomePage() {
               key={cat.label}
               to="/catalogo"
               search={{ categoria: cat.cat }}
-              className="group relative aspect-[4/3] rounded-sm overflow-hidden bg-neutral-100 block"
+              className="group relative aspect-[4/3] rounded-sm overflow-hidden bg-neutral-100 border border-neutral-100 flex items-center justify-center block p-1"
             >
               <img
                 src={cat.img}
                 alt={cat.label}
-                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
               <div className="absolute bottom-2.5 left-2.5 right-2.5 text-white">
@@ -199,11 +223,99 @@ function HomePage() {
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 md:gap-4">
           {products
-            .filter((p) => p.label === "SELECCIONADA" && p.price > 0)
+            .filter((p) => p.label === "SELECCIONADA" && p.price > 0 && p.id !== "lote-completo")
             .slice(0, 4)
             .map((p) => (
               <ProductCard key={p.id} product={p} />
             ))}
+        </div>
+      </section>
+
+      {/* SECCION ESPECIAL: LOTE COMPLETO (TODA LA ROPA JUNTA — ENVIO GRATIS) */}
+      <section className="py-10 md:py-14 bg-neutral-950 text-white w-full border-b border-neutral-900">
+        <div className="max-w-5xl mx-auto px-4">
+          <div className="bg-neutral-900/90 border border-neutral-800 rounded-sm p-6 md:p-8 grid md:grid-cols-2 gap-8 items-center">
+            <div>
+              <div className="flex flex-wrap items-center gap-2 mb-3">
+                <span className="bg-emerald-600 text-white text-[10px] font-black tracking-widest px-2 py-0.5 rounded-xs uppercase">
+                  OFERTA ESPECIAL
+                </span>
+                <span className="bg-white/10 text-neutral-300 text-[10px] font-semibold tracking-wider px-2 py-0.5 rounded-xs">
+                  ENVIO A DOMICILIO GRATIS
+                </span>
+              </div>
+
+              <h2 className="text-2xl md:text-3xl font-black tracking-tight text-white leading-tight">
+                Lote Completo — Toda la Ropa Junta
+              </h2>
+
+              <p className="text-[13px] text-neutral-300 mt-2.5 leading-relaxed">
+                Adquiere toda la coleccion de la tienda en una sola compra. 18 piezas en total seleccionadas y revisadas una a una, listas para usar o revender.
+              </p>
+
+              {/* Precios */}
+              <div className="mt-4 flex items-baseline gap-3">
+                <span className="text-3xl font-black text-amber-400">$1,830 MXN</span>
+                <span className="text-base text-neutral-500 line-through font-semibold">$2,230 MXN</span>
+                <span className="text-xs font-bold text-emerald-400 bg-emerald-950/80 px-2 py-0.5 rounded-xs">
+                  Ahorras $400 MXN
+                </span>
+              </div>
+
+              {/* Beneficios incluidos */}
+              <ul className="mt-4 space-y-2 text-xs text-neutral-300 font-medium">
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400 flex-shrink-0" />
+                  <span><strong>15 prendas de marca:</strong> Levi's, Nike, American Eagle, ANDREA, gorras NY y pantalones.</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 flex-shrink-0" />
+                  <span><strong>2 prendas de regalo:</strong> Blusita artesanal bordada + mayon negro sin costo.</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-white flex-shrink-0" />
+                  <span><strong>Envio a domicilio gratis</strong> en todo Teziutlan.</span>
+                </li>
+              </ul>
+
+              {/* Botones de accion */}
+              <div className="mt-6 flex flex-col sm:flex-row gap-2.5">
+                <button
+                  onClick={handleBuyLoteWhatsApp}
+                  className="bg-[#25D366] hover:bg-[#20bd5a] text-black font-bold text-xs py-3 px-5 rounded-xs tracking-wider flex items-center justify-center gap-2 transition-colors"
+                >
+                  <Send className="w-3.5 h-3.5" />
+                  Comprar Lote por WhatsApp ($1,830 MXN)
+                </button>
+                <button
+                  onClick={handleAddLoteCart}
+                  className="bg-white/10 hover:bg-white hover:text-black text-white text-xs font-semibold py-3 px-4 rounded-xs border border-white/20 tracking-wider flex items-center justify-center gap-2 transition-colors"
+                >
+                  <ShoppingBag className="w-3.5 h-3.5" />
+                  {lotAdded ? "Agregado al carrito" : "Agregar al carrito"}
+                </button>
+              </div>
+            </div>
+
+            {/* Galeria del lote — 6 prendas representativas */}
+            <div className="grid grid-cols-3 gap-2">
+              {[
+                { src: "/products/p8.jpg", name: "Levi's" },
+                { src: "/products/p10.jpg", name: "Nike" },
+                { src: "/products/p9.jpg", name: "Gorras NY" },
+                { src: "/products/p1.jpg", name: "APT.9" },
+                { src: "/products/p17.jpg", name: "American Eagle" },
+                { src: "/products/p12.jpg", name: "ANDREA" },
+              ].map((item, i) => (
+                <div key={i} className="aspect-[3/4] bg-neutral-950 rounded-xs overflow-hidden border border-neutral-800 p-1 flex items-center justify-center relative group">
+                  <img src={item.src} alt={item.name} className="w-full h-full object-contain" />
+                  <span className="absolute bottom-1 text-[9px] font-bold text-neutral-400 bg-black/70 px-1 rounded-xs">
+                    {item.name}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
 
