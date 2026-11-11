@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
-import { ArrowLeft, MessageCircle, ShoppingBag, ShieldCheck, Tag } from "lucide-react";
+import { ArrowLeft, MessageCircle, ShoppingBag, ShieldCheck, Tag, Image as ImageIcon } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { formatPrice, products, LOTE_COMPLETO, STORE_PHONE, conditionLabels } from "@/lib/products";
@@ -41,6 +41,7 @@ function ProductoDetalle() {
   const { product } = Route.useLoaderData();
   const gallery = product.images && product.images.length > 0 ? product.images : [product.image];
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [imgError, setImgError] = useState(false);
 
   const hasSizes = product.sizes.length > 0;
   const [size, setSize] = useState<string | number | null>(
@@ -87,11 +88,20 @@ function ProductoDetalle() {
           {/* GALERÍA ESTILO TEMU / NIKE / AMAZON (3:4 VERTICAL CON CONTADOR FLOTANTE 1/N) */}
           <div className="space-y-3">
             <div className="bg-neutral-50 aspect-[3/4] rounded-sm overflow-hidden relative border border-neutral-200 flex items-center justify-center p-2">
-              <img
-                src={gallery[activeImageIndex]}
-                alt={`${product.name} - ${activeImageIndex + 1}`}
-                className="w-full h-full object-contain"
-              />
+              {imgError || !gallery[activeImageIndex] ? (
+                <div className="w-full h-full flex flex-col items-center justify-center bg-neutral-100 text-neutral-400 select-none p-4">
+                  <ImageIcon className="w-10 h-10 stroke-[1.25] text-neutral-300 mb-2" />
+                  <span className="text-xs font-mono tracking-widest text-neutral-400 uppercase">THE LION &amp; CO</span>
+                  <span className="text-[10px] text-neutral-400 mt-1">Foto en actualización</span>
+                </div>
+              ) : (
+                <img
+                  src={gallery[activeImageIndex]}
+                  alt={`${product.name} - ${activeImageIndex + 1}`}
+                  onError={() => setImgError(true)}
+                  className="w-full h-full object-contain"
+                />
+              )}
 
               {/* Etiqueta de tipo de prenda */}
               <div className="absolute top-3 left-3 bg-black/85 text-white px-2 py-0.5 text-[10px] font-bold rounded-xs tracking-wider">
@@ -99,7 +109,7 @@ function ProductoDetalle() {
               </div>
 
               {/* Indicador de foto flotante estilo Temu (ej. 1/4) */}
-              {gallery.length > 1 && (
+              {!imgError && gallery.length > 1 && (
                 <div className="absolute bottom-3 right-3 bg-black/70 backdrop-blur-xs text-white px-2 py-0.5 text-[11px] font-mono rounded-full font-bold">
                   {activeImageIndex + 1}/{gallery.length}
                 </div>

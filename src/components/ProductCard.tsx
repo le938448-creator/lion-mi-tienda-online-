@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { formatPrice, type Product } from "@/lib/products";
 import { useCart } from "@/lib/cart";
 import { useState } from "react";
-import { ShoppingBag } from "lucide-react";
+import { ShoppingBag, Image as ImageIcon } from "lucide-react";
 
 const LABEL_STYLES: Record<string, string> = {
   NUEVO: "bg-black text-white",
@@ -13,6 +13,7 @@ const LABEL_STYLES: Record<string, string> = {
 export function ProductCard({ product }: { product: Product }) {
   const { addItem } = useCart();
   const [added, setAdded] = useState(false);
+  const [imgError, setImgError] = useState(false);
 
   const handleAdd = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -27,12 +28,20 @@ export function ProductCard({ product }: { product: Product }) {
   return (
     <Link to="/producto/$id" params={{ id: product.id }} className="group block">
       <div className="relative aspect-[4/5] bg-neutral-100 rounded-sm overflow-hidden flex items-center justify-center p-1">
-        <img
-          src={product.image}
-          alt={product.name}
-          className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
-          loading="lazy"
-        />
+        {imgError || !product.image ? (
+          <div className="w-full h-full flex flex-col items-center justify-center bg-neutral-100 text-neutral-400 select-none p-3">
+            <ImageIcon className="w-6 h-6 stroke-[1.25] text-neutral-300 mb-1" />
+            <span className="text-[9px] font-mono tracking-widest text-neutral-400 uppercase">THE LION</span>
+          </div>
+        ) : (
+          <img
+            src={product.image}
+            alt={product.name}
+            onError={() => setImgError(true)}
+            className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
+            loading="lazy"
+          />
+        )}
 
         {/* Etiqueta chica superior izquierda */}
         <span

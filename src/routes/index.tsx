@@ -200,21 +200,19 @@ Me indican disponibilidad y coordinamos la entrega?`;
               </div>
             </div>
 
-            {/* Galería de prendas del lote */}
+            {/* Resumen de marcas del lote */}
             <div className="grid grid-cols-3 gap-2">
               {[
-                { src: "/products/p8.jpg", name: "Levi's" },
-                { src: "/products/p10.jpg", name: "Nike" },
-                { src: "/products/p9.jpg", name: "2 Gorras NY" },
-                { src: "/products/p17.jpg", name: "American Eagle" },
-                { src: "/products/p1.jpg", name: "APT.9" },
-                { src: "/products/p12.jpg", name: "ANDREA" },
+                { name: "Levi's", type: "Chamarra" },
+                { name: "Nike", type: "Sudadera" },
+                { name: "2 Gorras NY", type: "Accesorios" },
+                { name: "American Eagle", type: "Pantalón" },
+                { name: "APT.9", type: "Pantalón" },
+                { name: "ANDREA", type: "Short" },
               ].map((item, i) => (
-                <div key={i} className="aspect-[3/4] bg-neutral-950 rounded-xs overflow-hidden border border-neutral-800 p-1 flex items-center justify-center relative">
-                  <img src={item.src} alt={item.name} className="w-full h-full object-contain" />
-                  <span className="absolute bottom-1 text-[9px] font-bold text-neutral-400 bg-black/70 px-1 rounded-xs">
-                    {item.name}
-                  </span>
+                <div key={i} className="aspect-[3/4] bg-neutral-950 rounded-xs overflow-hidden border border-neutral-800 p-2 flex flex-col items-center justify-center text-center relative select-none">
+                  <span className="text-xs font-bold text-white mb-0.5">{item.name}</span>
+                  <span className="text-[10px] text-neutral-400 font-mono uppercase">{item.type}</span>
                 </div>
               ))}
             </div>
