@@ -1,426 +1,381 @@
-import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
-import { useEffect, useState, useRef } from "react";
-import { products, STORE_PHONE, STORE_PHONE_DISPLAY } from "@/lib/products";
-import { Recycle, Gift, MessageCircle, ShoppingBag, Dumbbell } from "lucide-react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useState, useRef } from "react";
+import { SiteHeader } from "@/components/SiteHeader";
+import { SiteFooter } from "@/components/SiteFooter";
+import { ProductCard } from "@/components/ProductCard";
+import { products, formatPrice, STORE_PHONE, STORE_PHONE_DISPLAY } from "@/lib/products";
+import { ArrowRight, ChevronRight, Sparkles, Send, HeartHandshake } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "The Lion & Co — Teziutlán" },
+      { title: "THE LION & CO — Teziutlan" },
       {
         name: "description",
-        content:
-          "The Lion & Co — Moda circular, segunda mano seleccionada, ropa gratis comunitaria y piezas urbanas en Teziutlán, Puebla.",
+        content: "THE LION & CO: Tienda oficial, prendas seleccionadas, moda urbana y donaciones comunitarias en Teziutlan, Puebla.",
       },
     ],
   }),
-  component: Editorial,
+  component: HomePage,
 });
 
-// Colores y estilos por sección para diferenciar visualmente
-const SECTION_STYLES: Record<
-  string,
-  {
-    accent: string;        // color de acento del overlay al hover
-    badge: string;         // estilo del badge de tipo
-    badgeText: string;
-    badgeIcon?: string;
-    tagColor: string;
-    titleColor: string;
-    cta: string;
-    overlayFrom: string;
-  }
-> = {
-  "segunda-mano": {
-    accent: "group-hover:from-amber-950/95",
-    badge: "bg-amber-400 text-black",
-    badgeText: "SEGUNDA MANO",
-    tagColor: "text-amber-300/80",
-    titleColor: "text-amber-50",
-    cta: "text-amber-300",
-    overlayFrom: "from-black/90 md:group-hover:from-amber-950/95 group-data-[active=true]:from-amber-950/95",
-  },
-  "hombre": {
-    accent: "",
-    badge: "bg-white text-black",
-    badgeText: "CATÁLOGO",
-    tagColor: "text-blue-200/70",
-    titleColor: "text-white",
-    cta: "text-white",
-    overlayFrom: "from-black/90 md:group-hover:from-black/95 group-data-[active=true]:from-black/95",
-  },
-  "mujer": {
-    accent: "",
-    badge: "bg-white text-black",
-    badgeText: "CATÁLOGO",
-    tagColor: "text-pink-200/70",
-    titleColor: "text-white",
-    cta: "text-white",
-    overlayFrom: "from-black/90 md:group-hover:from-black/95 group-data-[active=true]:from-black/95",
-  },
-  "ropa-gratis": {
-    accent: "",
-    badge: "bg-emerald-400 text-black",
-    badgeText: "GRATIS",
-    tagColor: "text-emerald-300/80",
-    titleColor: "text-emerald-50",
-    cta: "text-emerald-300",
-    overlayFrom: "from-black/90 md:group-hover:from-emerald-950/95 group-data-[active=true]:from-emerald-950/95",
-  },
-  "originals": {
-    accent: "",
-    badge: "bg-amber-400 text-black",
-    badgeText: "PRÓXIMAMENTE",
-    tagColor: "text-amber-300/80",
-    titleColor: "text-white",
-    cta: "text-amber-300",
-    overlayFrom: "from-black/90 md:group-hover:from-neutral-950/95 group-data-[active=true]:from-neutral-950/95",
-  },
-};
-
-function CategoryCard({
-  cat,
-  index,
-  total,
-  onSelect,
-}: {
-  cat: any;
-  index: number;
-  total: number;
-  onSelect: (slug: string | null, customSearch?: any) => void;
-}) {
-  const ref = useRef<HTMLButtonElement>(null);
-  const [isActive, setIsActive] = useState(false);
-  const style = SECTION_STYLES[cat.styleKey] || SECTION_STYLES["hombre"];
-
-  useEffect(() => {
-    if (window.innerWidth >= 768) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => setIsActive(entry.isIntersecting),
-      { threshold: 0.55 }
-    );
-    if (ref.current) observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, []);
-
-  return (
-    <button
-      ref={ref}
-      onClick={() => onSelect(cat.slug, cat.customSearch)}
-      data-active={isActive}
-      className="group relative overflow-hidden border-b border-white/10 md:border-b-0 md:border-r last:border-r-0 min-h-[52vh] md:min-h-[calc(100vh-116px)] text-left focus:outline-none"
-    >
-      {/* Imagen de fondo */}
-      <img
-        src={cat.img}
-        alt={cat.title}
-        className="absolute inset-0 w-full h-full object-cover transition-all duration-[1400ms] ease-out grayscale opacity-65 md:group-hover:scale-[1.06] md:group-hover:grayscale-0 md:group-hover:opacity-100 group-data-[active=true]:scale-[1.06] group-data-[active=true]:grayscale-0 group-data-[active=true]:opacity-100"
-      />
-      {/* Gradiente con color de acento */}
-      <div
-        className={`absolute inset-0 bg-gradient-to-t ${style.overlayFrom} via-black/20 to-black/30 transition-all duration-700`}
-      />
-
-      {/* Badge de tipo de sección (esquina superior izquierda) */}
-      <div className="absolute top-4 left-4 md:top-6 md:left-6 z-10">
-        <span className={`${style.badge} text-[9px] md:text-[10px] font-black tracking-[0.2em] px-2.5 py-1 uppercase`}>
-          {cat.badgeIcon && `${cat.badgeIcon} `}{style.badgeText}
-        </span>
-      </div>
-
-      {/* Contador de prendas (esquina superior derecha, vertical) */}
-      <div
-        className="absolute top-4 md:top-8 right-3 md:right-5 text-white/50 font-mono text-[8px] md:text-[9px] tracking-[0.25em] uppercase"
-        style={{ writingMode: "vertical-rl" }}
-      >
-        {cat.pieces}
-      </div>
-
-      {/* Código editorial (top left bajo el badge) */}
-      <div className="absolute top-12 md:top-16 left-4 md:left-6 flex items-center gap-2 text-white/40 font-mono text-[8px] md:text-[10px] tracking-[0.25em] uppercase">
-        <span className="h-px w-5 md:w-7 bg-white/30 transition-all duration-500 md:group-hover:w-12 group-data-[active=true]:w-12" />
-        {cat.code}
-      </div>
-
-      {/* Subtítulo al centro (aparece al hover) */}
-      <div className="absolute top-1/2 left-6 md:left-8 right-6 md:right-8 -translate-y-1/2 text-center opacity-0 translate-y-2 pointer-events-none transition-all duration-700 md:group-hover:opacity-100 md:group-hover:translate-y-0 group-data-[active=true]:opacity-100 group-data-[active=true]:translate-y-0">
-        <span className="font-heading italic text-white/80 text-sm md:text-xl" style={{ fontWeight: 300, letterSpacing: "0.02em" }}>
-          « {cat.subtitle} »
-        </span>
-      </div>
-
-      {/* Info principal (parte inferior) */}
-      <div className="absolute bottom-6 md:bottom-8 left-4 md:left-8 right-4 md:right-8 z-10">
-        <div className={`h-px w-10 md:w-14 ${cat.accentLine || "bg-white/40"} mb-3 transition-all duration-700 md:group-hover:w-24 group-data-[active=true]:w-24`} />
-        <p className={`font-mono text-[8px] md:text-[10px] tracking-[0.2em] md:tracking-[0.25em] uppercase mb-2 ${style.tagColor}`}>
-          {cat.tags}
-        </p>
-        <h2 className={`font-heading overflow-hidden ${style.titleColor}`} style={{ fontSize: "clamp(26px, 4vw, 72px)", fontWeight: 500, letterSpacing: "-0.02em", lineHeight: 1 }}>
-          <span className="inline-block transition-transform duration-700 md:group-hover:-translate-y-1 group-data-[active=true]:-translate-y-1">
-            {cat.title}
-          </span>
-        </h2>
-        <div className="mt-3 md:mt-4 flex items-center justify-between">
-          <span className={`font-mono text-[9px] md:text-[10px] tracking-[0.3em] uppercase font-bold ${style.cta} transition-all duration-500`}>
-            {cat.ctaLabel || "Ver Prendas"} →
-          </span>
-          <span className="text-white/25 font-mono text-[8px] tracking-[0.2em]">
-            0{index + 1} / 0{total}
-          </span>
-        </div>
-      </div>
-    </button>
-  );
-}
-
-function Editorial() {
+function HomePage() {
   const navigate = useNavigate();
-  const [pos, setPos] = useState({ x: -100, y: -100 });
-  const [ringPos, setRingPos] = useState({ x: -100, y: -100 });
-  const [showSplash, setShowSplash] = useState(true);
 
-  // Cantidades calculadas automáticamente del inventario real
-  const hombreCount = products.filter((p) => p.category === "hombre").length;
-  const mujerCount = products.filter((p) => p.category === "mujer").length;
-  const segundaManoCount = products.filter((p) => p.isSecondHand).length;
-  const ninos = products.filter((p) => p.category === "ninos").length;
+  // 4 a 6 prendas destacadas para el carrusel horizontal
+  const featuredProducts = products.filter((p) => p.price > 0).slice(0, 6);
 
-  const CATEGORIES = [
-    {
-      code: "01 / CIRCULAR",
-      title: "SEGUNDA MANO",
-      subtitle: "Prendas únicas a precios reales",
-      tags: "MODA CIRCULAR · TEZIUTLÁN · SALDOS",
-      pieces: `${segundaManoCount} prendas`,
-      img: "https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=1400&q=90&fit=crop",
-      slug: "segunda-mano",
-      styleKey: "segunda-mano",
-      accentLine: "bg-amber-400/60",
-      ctaLabel: "Ver Segunda Mano",
-      customSearch: { categoria: "segunda-mano" },
-    },
-    {
-      code: "02 / CATÁLOGO",
-      title: "HOMBRE",
-      subtitle: "Streetwear & básicos urbanos",
-      tags: "OVERSIZE · HOODIES · CARGOS",
-      pieces: `${hombreCount} prendas`,
-      img: "https://images.unsplash.com/photo-1488161628813-04466f872be2?w=1400&q=90&fit=crop",
-      slug: "hombre",
-      styleKey: "hombre",
-      accentLine: "bg-white/40",
-      ctaLabel: "Ver Hombre",
-      customSearch: { categoria: "hombre" },
-    },
-    {
-      code: "03 / CATÁLOGO",
-      title: "MUJER",
-      subtitle: "Básicos y prendas de temporada",
-      tags: "CASUAL · BLUSAS · VESTIDOS",
-      pieces: `${mujerCount} prendas`,
-      img: "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=1400&q=90&fit=crop",
-      slug: "mujer",
-      styleKey: "mujer",
-      accentLine: "bg-white/40",
-      ctaLabel: "Ver Mujer",
-      customSearch: { categoria: "mujer" },
-    },
-    {
-      code: "04 / COMUNIDAD",
-      title: "ROPA GRATIS",
-      subtitle: "Para quien lo necesite, sin juicios",
-      tags: "DONAR · RECIBIR · TEZIUTLÁN",
-      pieces: "Iniciativa comunitaria",
-      img: "https://images.unsplash.com/photo-1593113616828-6f22bca04804?w=1400&q=90&fit=crop",
-      slug: "ropa-gratis",
-      styleKey: "ropa-gratis",
-      accentLine: "bg-emerald-400/60",
-      ctaLabel: "Donar o Recibir",
-      customSearch: null,
-    },
-  ];
+  // Lista de espera Originals
+  const [waitlistName, setWaitlistName] = useState("");
 
-  useEffect(() => {
-    const timer = setTimeout(() => setShowSplash(false), 1800);
-    return () => clearTimeout(timer);
-  }, []);
+  // Donaciones / Comunidad
+  const [donationType, setDonationType] = useState<"donar" | "necesito">("donar");
+  const [donationDetail, setDonationDetail] = useState("");
 
-  useEffect(() => {
-    const onMove = (e: MouseEvent) => setPos({ x: e.clientX, y: e.clientY });
-    window.addEventListener("mousemove", onMove);
-    return () => window.removeEventListener("mousemove", onMove);
-  }, []);
+  const handleWaitlistSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const name = waitlistName.trim() || "Interesado";
+    const text = `Hola THE LION & CO, me gustaria unirme a la lista de espera de The Lion Originals (Drop 01 - 2027). Mi nombre es: ${name}.`;
+    window.open(`https://wa.me/${STORE_PHONE}?text=${encodeURIComponent(text)}`, "_blank");
+  };
 
-  useEffect(() => {
-    let raf = 0;
-    const loop = () => {
-      setRingPos((prev) => ({
-        x: prev.x + (pos.x - prev.x) * 0.18,
-        y: prev.y + (pos.y - prev.y) * 0.18,
-      }));
-      raf = requestAnimationFrame(loop);
-    };
-    raf = requestAnimationFrame(loop);
-    return () => cancelAnimationFrame(raf);
-  }, [pos]);
-
-  const handleSelectCategory = (slug: string | null, customSearch?: any) => {
-    if (slug === "ropa-gratis") {
-      navigate({ to: "/tienda" });
-      return;
-    }
-    if (customSearch) {
-      navigate({ to: "/catalogo", search: customSearch });
-    } else if (slug) {
-      navigate({ to: "/catalogo", search: { categoria: slug } });
-    } else {
-      navigate({ to: "/catalogo" });
-    }
+  const handleDonationSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const action = donationType === "donar" ? "Quiero donar ropa" : "Necesito ropa";
+    const detail = donationDetail.trim() ? ` Detalle: ${donationDetail.trim()}` : "";
+    const text = `Hola THE LION & CO, me comunico sobre la iniciativa de Donaciones en Teziutlan: ${action}.${detail}`;
+    window.open(`https://wa.me/${STORE_PHONE}?text=${encodeURIComponent(text)}`, "_blank");
   };
 
   return (
-    <>
-      {/* SPLASH SCREEN — solo nombre, sin imagen de cruz */}
-      <div
-        className={`fixed inset-0 z-50 bg-black flex flex-col items-center justify-center transition-opacity duration-700 ${
-          showSplash ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
-        }`}
-      >
-        <div className="font-heading text-4xl md:text-7xl text-white tracking-tight" style={{ fontWeight: 400, letterSpacing: "-0.02em" }}>
-          THE LION &amp; CO
-        </div>
-        <div className="mt-3 text-white/40 font-mono text-[10px] md:text-xs tracking-[0.4em] uppercase">
-          Teziutlán, Puebla · México
-        </div>
-      </div>
+    <div className="min-h-screen bg-white text-black flex flex-col font-sans">
+      <SiteHeader />
 
-      {/* Cursores animados */}
-      <div className="cursor-dot hidden md:block" style={{ left: pos.x, top: pos.y }} />
-      <div className="cursor-ring hidden md:block" style={{ left: ringPos.x, top: ringPos.y }} />
+      {/* HERO — FOTO DE LA MUJER COMPLETA */}
+      <section className="relative w-full aspect-[4/5] sm:aspect-[16/9] md:h-[80vh] min-h-[460px] max-h-[700px] overflow-hidden bg-neutral-900">
+        <img
+          src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1600&q=85&fit=crop"
+          alt="THE LION & CO"
+          className="absolute inset-0 w-full h-full object-cover object-center"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/30" />
 
-      <div className="min-h-screen bg-black text-white flex flex-col">
-
-        {/* BARRA SUPERIOR: accesos directos */}
-        <div className="bg-black border-b border-white/10 px-4 md:px-8 py-2 flex flex-wrap items-center justify-between gap-2 text-[11px] z-10">
-          <div className="text-white/50 tracking-widest font-mono text-[10px] uppercase hidden md:block">
-            Teziutlán, Pue. · Moto $30 o entrega en centro
+        <div className="relative z-10 h-full max-w-5xl mx-auto px-5 flex flex-col justify-between py-8 md:py-12">
+          {/* Arriba: THE LION & CO */}
+          <div>
+            <h1 className="text-white font-black tracking-tight text-2xl md:text-4xl uppercase">
+              THE LION &amp; CO
+            </h1>
+            <p className="text-white/70 text-xs md:text-sm tracking-widest uppercase mt-0.5">
+              Teziutlan, Puebla
+            </p>
           </div>
-          <div className="flex items-center gap-2 flex-wrap">
+
+          {/* Abajo: Tienda Oficial + Boton delgado "Entrar a la tienda" */}
+          <div className="space-y-3">
+            <div>
+              <span className="text-amber-400 text-[11px] font-bold tracking-widest uppercase block mb-1">
+                Coleccion 2026
+              </span>
+              <h2 className="text-white text-2xl md:text-3xl font-black tracking-tight">
+                Tienda Oficial
+              </h2>
+            </div>
             <Link
               to="/catalogo"
-              search={{ categoria: "segunda-mano" }}
-              className="bg-amber-400 text-black px-3 py-1 font-black text-[10px] tracking-wider uppercase flex items-center gap-1 hover:bg-amber-300 transition-colors"
+              className="inline-flex items-center justify-center gap-2 bg-white text-black hover:bg-neutral-100 px-6 py-2.5 text-xs font-semibold rounded-sm tracking-wider transition-colors"
             >
-              <Recycle className="w-3 h-3" /> SEGUNDA MANO
+              Entrar a la tienda <ArrowRight className="w-3.5 h-3.5" />
             </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* 1. SECCION: TIENDA OFICIAL */}
+      <section className="py-8 md:py-12 border-b border-neutral-100 max-w-5xl mx-auto px-4 w-full">
+        <div className="flex items-end justify-between mb-4">
+          <div>
+            <span className="text-[10px] font-bold tracking-widest text-neutral-400 uppercase">
+              Lo nuevo &amp; Curado
+            </span>
+            <h2 className="text-[20px] md:text-[22px] font-bold text-neutral-900 tracking-tight">
+              Tienda Oficial
+            </h2>
+          </div>
+          <Link
+            to="/catalogo"
+            className="text-xs font-semibold text-neutral-600 hover:text-black inline-flex items-center gap-1"
+          >
+            Ver todo <ChevronRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
+
+        {/* Categorias de acceso directo estilo Instagram / Nike */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+          {[
+            { label: "Mujer", sub: "Prendas y vestidos", cat: "mujer", img: "/products/p1.jpg" },
+            { label: "Caballero", sub: "Streetwear y basicos", cat: "hombre", img: "/products/p8.jpg" },
+            { label: "Ninos", sub: "Mezclilla y casual", cat: "ninos", img: "/products/p16.jpg" },
+            { label: "Accesorios", sub: "Gorras y complementos", cat: "accesorios", img: "/products/p9.jpg" },
+          ].map((cat) => (
             <Link
-              to="/tienda"
-              className="border border-emerald-500 text-emerald-400 hover:bg-emerald-500 hover:text-black px-3 py-1 font-bold text-[10px] tracking-wider uppercase flex items-center gap-1 transition-colors"
+              key={cat.label}
+              to="/catalogo"
+              search={{ categoria: cat.cat }}
+              className="group relative aspect-[4/3] rounded-sm overflow-hidden bg-neutral-100 block"
             >
-              <Gift className="w-3 h-3" /> ROPA GRATIS
+              <img
+                src={cat.img}
+                alt={cat.label}
+                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
+              <div className="absolute bottom-2.5 left-2.5 right-2.5 text-white">
+                <div className="text-xs font-bold">{cat.label}</div>
+                <div className="text-[10px] text-white/70">{cat.sub}</div>
+              </div>
             </Link>
-            <Link
-              to="/tienda"
-              className="border border-white/20 text-white/60 hover:text-white px-3 py-1 font-bold text-[10px] tracking-wider uppercase flex items-center gap-1 transition-colors"
-            >
-              <ShoppingBag className="w-3 h-3" /> TIENDA
-            </Link>
-            <a
-              href={`https://wa.me/${STORE_PHONE}?text=${encodeURIComponent(
-                "Hola The Lion & Co, me comunico desde la portada."
-              )}`}
-              target="_blank"
-              rel="noreferrer"
-              className="text-emerald-400 hover:text-emerald-300 font-bold text-[10px] flex items-center gap-1 transition-colors ml-1"
-            >
-              <MessageCircle className="w-3.5 h-3.5" />{STORE_PHONE_DISPLAY}
-            </a>
+          ))}
+        </div>
+      </section>
+
+      {/* 2. SECCION: OTRAS MARCAS */}
+      <section className="py-8 md:py-12 border-b border-neutral-100 max-w-5xl mx-auto px-4 w-full">
+        <div className="flex items-end justify-between mb-4">
+          <div>
+            <span className="text-[10px] font-bold tracking-widest text-neutral-400 uppercase">
+              Prendas nuevas con etiqueta
+            </span>
+            <h2 className="text-[20px] md:text-[22px] font-bold text-neutral-900 tracking-tight">
+              Otras Marcas
+            </h2>
+            <p className="text-[13px] text-neutral-500 mt-0.5">
+              Piezas nuevas de marcas reconocidas seleccionadas exclusivamente para Teziutlan.
+            </p>
+          </div>
+          <Link
+            to="/catalogo"
+            search={{ condicion: "nuevo" }}
+            className="text-xs font-semibold text-neutral-600 hover:text-black inline-flex items-center gap-1 flex-shrink-0 ml-2"
+          >
+            Ver nuevas <ChevronRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
+
+        {/* Grid de 2 en movil */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 md:gap-4">
+          {products
+            .filter((p) => p.label === "NUEVO" || p.condition === "nuevo")
+            .concat(products.filter((p) => p.brand === "LEVI'S" || p.brand === "NIKE"))
+            .slice(0, 4)
+            .map((p) => (
+              <ProductCard key={p.id} product={p} />
+            ))}
+        </div>
+      </section>
+
+      {/* 3. SECCION: SELECCIONADA */}
+      <section className="py-8 md:py-12 border-b border-neutral-100 max-w-5xl mx-auto px-4 w-full bg-neutral-50/50">
+        <div className="flex items-end justify-between mb-4">
+          <div>
+            <span className="text-[10px] font-bold tracking-widest text-neutral-400 uppercase">
+              Curaduria individual
+            </span>
+            <h2 className="text-[20px] md:text-[22px] font-bold text-neutral-900 tracking-tight">
+              Seleccionada
+            </h2>
+            <p className="text-[13px] text-neutral-500 mt-0.5">
+              Prenda por prenda inspeccionada, limpia y en excelente estado. Piezas unicas con medidas reales.
+            </p>
+          </div>
+          <Link
+            to="/catalogo"
+            search={{ condicion: "excelente" }}
+            className="text-xs font-semibold text-neutral-600 hover:text-black inline-flex items-center gap-1 flex-shrink-0 ml-2"
+          >
+            Ver catalogo <ChevronRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 md:gap-4">
+          {products
+            .filter((p) => p.label === "SELECCIONADA" && p.price > 0)
+            .slice(0, 4)
+            .map((p) => (
+              <ProductCard key={p.id} product={p} />
+            ))}
+        </div>
+      </section>
+
+      {/* 4. SECCION: PRENDAS DESTACADAS — CARRUSEL HORIZONTAL (4-6 PRENDAS) */}
+      <section className="py-8 md:py-12 border-b border-neutral-100 max-w-5xl mx-auto px-4 w-full">
+        <div className="flex items-end justify-between mb-4">
+          <div>
+            <span className="text-[10px] font-bold tracking-widest text-neutral-400 uppercase">
+              Favoritas de la semana
+            </span>
+            <h2 className="text-[20px] md:text-[22px] font-bold text-neutral-900 tracking-tight">
+              Prendas Destacadas
+            </h2>
+          </div>
+          <div className="text-[11px] text-neutral-400">
+            Desliza para ver mas
           </div>
         </div>
 
-        {/* HEADER — SIN imagen de cruz, solo texto */}
-        <header className="flex flex-col md:flex-row items-center justify-between px-4 md:px-8 py-4 z-10 gap-3 relative border-b border-white/5">
-          {/* Logo solo texto, SIN cruz */}
-          <Link
-            to="/"
-            className="font-heading text-lg md:text-xl font-black tracking-tight hover:opacity-80 transition-opacity flex-shrink-0"
-            style={{ letterSpacing: "-0.02em" }}
-          >
-            THE LION &amp; CO
-          </Link>
-
-          {/* Leyenda central del tipo de portada */}
-          <div className="hidden md:flex items-center gap-6 text-white/40 font-mono text-[10px] tracking-[0.2em] uppercase">
-            <span className="flex items-center gap-1.5 text-amber-400/80">
-              <span className="w-2 h-2 rounded-full bg-amber-400 inline-block" />
-              Segunda Mano
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-white/60 inline-block" />
-              Catálogo
-            </span>
-            <span className="flex items-center gap-1.5 text-emerald-400/80">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 inline-block" />
-              Ropa Gratis
-            </span>
-          </div>
-
-          {/* Navegación derecha */}
-          <nav className="flex flex-wrap justify-center md:justify-end gap-3 md:gap-6 font-mono text-[9px] md:text-[11px] tracking-[0.2em] uppercase">
-            <Link to="/catalogo" search={{ categoria: "segunda-mano" }} className="text-amber-400 font-bold hover:text-amber-300 transition-colors">
-              SEGUNDA MANO
-            </Link>
-            <Link to="/catalogo" search={{ categoria: "hombre" }} className="text-white/60 hover:text-white transition-colors">
-              HOMBRE
-            </Link>
-            <Link to="/catalogo" search={{ categoria: "mujer" }} className="text-white/60 hover:text-white transition-colors">
-              MUJER
-            </Link>
-            <Link to="/catalogo" search={{ categoria: "ninos" }} className="text-white/60 hover:text-white transition-colors">
-              NIÑOS
-            </Link>
-            <Link to="/catalogo" search={{ ofertas: "true" }} className="text-white/60 hover:text-white transition-colors">
-              OFERTAS
-            </Link>
-            <Link to="/tienda" className="text-emerald-400 font-bold hover:text-emerald-300 transition-colors">
-              ROPA GRATIS
-            </Link>
-          </nav>
-        </header>
-
-        {/* GRID DE 4 SECCIONES */}
-        <section className="flex-1 grid grid-cols-1 md:grid-cols-4 relative">
-          <div className="absolute top-4 left-1/2 -translate-x-1/2 z-20 text-white/50 font-mono text-[9px] tracking-[0.25em] uppercase mix-blend-difference pointer-events-none hidden md:block">
-            Elige una sección
-          </div>
-
-          {CATEGORIES.map((cat, i) => (
-            <CategoryCard
-              key={cat.title}
-              cat={cat}
-              index={i}
-              total={CATEGORIES.length}
-              onSelect={handleSelectCategory}
-            />
+        {/* Carrusel horizontal deslizante estilo Nike */}
+        <div className="flex gap-3 overflow-x-auto pb-4 snap-x snap-mandatory no-scrollbar -mx-4 px-4">
+          {featuredProducts.map((p) => (
+            <div key={p.id} className="min-w-[170px] sm:min-w-[210px] max-w-[210px] flex-shrink-0 snap-start">
+              <ProductCard product={p} />
+            </div>
           ))}
-        </section>
+        </div>
+      </section>
 
-        {/* PIE EDITORIAL */}
-        <footer className="flex flex-col sm:flex-row justify-between items-center px-6 md:px-8 py-4 text-white/30 font-mono text-[10px] tracking-[0.2em] uppercase border-t border-white/5 gap-2">
-          <div className="flex items-center gap-4">
-            <span className="flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-amber-400" /> Moda Circular
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" /> Ropa Gratis
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-white/50" /> Catálogo
-            </span>
+      {/* 5. SECCION: THE LION ORIGINALS — PROXIMAMENTE (DROP 01, 2027) */}
+      <section id="originals" className="py-12 md:py-16 bg-neutral-950 text-white w-full border-b border-neutral-900">
+        <div className="max-w-5xl mx-auto px-4">
+          <div className="grid md:grid-cols-2 gap-8 items-center">
+            <div>
+              <div className="flex items-center gap-2 mb-3">
+                <span className="text-[9px] font-bold tracking-widest bg-amber-400 text-black px-2 py-0.5 rounded-xs uppercase">
+                  DROP 01
+                </span>
+                <span className="text-[11px] font-mono text-neutral-400 tracking-wider">
+                  2027
+                </span>
+              </div>
+
+              <h2 className="text-[26px] md:text-[32px] font-black tracking-tight leading-tight">
+                THE LION ORIGINALS
+              </h2>
+
+              <p className="text-[13px] text-neutral-400 mt-3 leading-relaxed">
+                Nuestra propia linea de ropa de gym, tenis, mochilas y accesorios deportivos. Hecha para entrenar duro, silueta limpia y corte comodo.
+              </p>
+
+              <div className="mt-4 flex flex-wrap gap-2 text-[11px] text-neutral-300 font-medium">
+                <span className="bg-neutral-900 border border-neutral-800 px-2.5 py-1 rounded-xs">Ropa de gym</span>
+                <span className="bg-neutral-900 border border-neutral-800 px-2.5 py-1 rounded-xs">Tenis urbanos</span>
+                <span className="bg-neutral-900 border border-neutral-800 px-2.5 py-1 rounded-xs">Mochilas</span>
+                <span className="bg-neutral-900 border border-neutral-800 px-2.5 py-1 rounded-xs">Accesorios</span>
+              </div>
+
+              {/* Formulario lista de espera por WhatsApp */}
+              <form onSubmit={handleWaitlistSubmit} className="mt-6 flex flex-col sm:flex-row gap-2 max-w-sm">
+                <input
+                  type="text"
+                  placeholder="Tu nombre o alias"
+                  value={waitlistName}
+                  onChange={(e) => setWaitlistName(e.target.value)}
+                  className="bg-neutral-900 border border-neutral-700 text-white px-3 py-2 text-xs rounded-xs outline-none focus:border-amber-400 flex-1 placeholder:text-neutral-500"
+                />
+                <button
+                  type="submit"
+                  className="bg-amber-400 hover:bg-amber-300 text-black px-4 py-2 text-xs font-bold rounded-xs tracking-wider uppercase flex items-center justify-center gap-1.5 transition-colors whitespace-nowrap"
+                >
+                  <Sparkles className="w-3.5 h-3.5" /> Lista de espera
+                </button>
+              </form>
+              <p className="text-[10px] text-neutral-500 mt-2">
+                Aviso prioritario por WhatsApp antes del lanzamiento oficial.
+              </p>
+            </div>
+
+            <div className="relative aspect-[4/3] rounded-sm overflow-hidden bg-neutral-900 border border-neutral-800">
+              <img
+                src="https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=800&q=80"
+                alt="The Lion Originals Drop 01"
+                className="w-full h-full object-cover opacity-60"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
+              <div className="absolute bottom-4 left-4 right-4 text-white">
+                <div className="text-[11px] font-bold text-amber-400 tracking-wider">PROXIMAMENTE</div>
+                <div className="text-sm font-semibold">Drop 01 · Coleccion Gym &amp; Street</div>
+              </div>
+            </div>
           </div>
-          <span>Teziutlán, Puebla, México</span>
-        </footer>
-      </div>
-    </>
+        </div>
+      </section>
+
+      {/* 6. SECCION: DONACIONES / COMUNIDAD (SIN CUENTAS, DIRECTO POR WHATSAPP) */}
+      <section id="donaciones" className="py-12 md:py-16 bg-white border-b border-neutral-100 max-w-5xl mx-auto px-4 w-full">
+        <div className="text-center max-w-md mx-auto mb-8">
+          <div className="inline-flex items-center gap-1.5 text-[11px] font-bold tracking-widest text-emerald-800 uppercase bg-emerald-50 px-2.5 py-1 rounded-full mb-2">
+            <HeartHandshake className="w-3.5 h-3.5 text-emerald-600" />
+            Iniciativa Comunitaria
+          </div>
+          <h2 className="text-[20px] md:text-[22px] font-bold text-neutral-900 tracking-tight">
+            Donaciones / Comunidad
+          </h2>
+          <p className="text-[13px] text-neutral-500 mt-1">
+            Recibimos ropa en buen estado que ya no uses y la ponemos a disposicion gratis para familias en Teziutlan. Sin cuentas de usuario.
+          </p>
+        </div>
+
+        <div className="max-w-md mx-auto bg-neutral-50 p-5 rounded-sm border border-neutral-200">
+          <form onSubmit={handleDonationSubmit} className="space-y-3">
+            <div>
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-neutral-600 mb-1.5">
+                Que deseas hacer?
+              </label>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => setDonationType("donar")}
+                  className={`py-2 text-xs font-semibold rounded-xs border transition-colors ${
+                    donationType === "donar"
+                      ? "bg-black text-white border-black"
+                      : "bg-white text-neutral-700 border-neutral-300 hover:border-black"
+                  }`}
+                >
+                  Quiero Donar
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setDonationType("necesito")}
+                  className={`py-2 text-xs font-semibold rounded-xs border transition-colors ${
+                    donationType === "necesito"
+                      ? "bg-black text-white border-black"
+                      : "bg-white text-neutral-700 border-neutral-300 hover:border-black"
+                  }`}
+                >
+                  Necesito Ropa
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-neutral-600 mb-1">
+                {donationType === "donar" ? "Prendas que deseas donar" : "Tallas o prendas que necesitas"}
+              </label>
+              <textarea
+                rows={2}
+                placeholder={
+                  donationType === "donar"
+                    ? "Ej. 2 pantalones de nino talla 10, sueter de dama..."
+                    : "Ej. Ropa para nino de 8 anos o playera talla M..."
+                }
+                value={donationDetail}
+                onChange={(e) => setDonationDetail(e.target.value)}
+                className="w-full text-xs p-2.5 bg-white border border-neutral-300 rounded-xs outline-none focus:border-black"
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="w-full bg-emerald-700 hover:bg-emerald-800 text-white py-2.5 text-xs font-bold tracking-wider rounded-xs flex items-center justify-center gap-1.5 transition-colors"
+            >
+              <Send className="w-3.5 h-3.5" />
+              Enviar por WhatsApp
+            </button>
+          </form>
+        </div>
+      </section>
+
+      {/* FOOTER */}
+      <SiteFooter />
+    </div>
   );
 }

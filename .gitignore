@@ -16,6 +16,7 @@ dist-ssr
 .nitro
 .vercel/
 *.local
+Ropa*.html
 
 # Wrangler / Cloudflare
 .wrangler/
